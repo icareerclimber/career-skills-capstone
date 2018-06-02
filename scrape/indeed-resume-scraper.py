@@ -20,7 +20,7 @@ import csv
 # Process one city at a time. In order to do so,
 # get a distinct list of the resume ids for that city.
 # Update the variables below for the city name.
-city_name = "nyc"
+city_name = "ny"
 resume_id_list = city_name + "_resume_ids.csv"
 out_file_name = city_name + "_resume_data.csv"
 
@@ -43,6 +43,9 @@ def main():
             job_link_soup = BeautifulSoup(job_link_page.text, "html.parser")
             basic_info = job_link_soup.find(name="div", attrs={"id":"basic_info_cell"})
             containers = job_link_soup.findAll(name="div", attrs={"class":"items-container"})
+            if not containers: 
+                print("Resume not found: {}".format(resume_id))
+                continue
             combined_list = []
             combined_list.append(basic_info)
             [combined_list.append(x) for x in containers]
@@ -63,7 +66,7 @@ def log(msg):
 
 
 def sleep_non_bot():
-    sleep_time = random.randint(1100,2300)/1000.0
+    sleep_time = random.randint(1100,4000)/1000.0
     #print("Sleeping for time={} seconds".format(str(sleep_time)))
     logging.info("Sleeping for time={} seconds".format(str(sleep_time)))
     time.sleep(sleep_time) #waits for a random time so that the website don't consider you as a bot
