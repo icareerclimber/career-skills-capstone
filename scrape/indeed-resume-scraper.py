@@ -66,7 +66,7 @@ def log(msg):
 
 
 def sleep_non_bot():
-    sleep_time = random.randint(1100,4000)/1000.0
+    sleep_time = random.randint(2100,4000)/1000.0
     #print("Sleeping for time={} seconds".format(str(sleep_time)))
     logging.info("Sleeping for time={} seconds".format(str(sleep_time)))
     time.sleep(sleep_time) #waits for a random time so that the website don't consider you as a bot
