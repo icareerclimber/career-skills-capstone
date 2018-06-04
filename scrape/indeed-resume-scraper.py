@@ -27,7 +27,7 @@ out_file_name = city_name + "_resume_data.csv"
 def main():
     logging.basicConfig(filename="indeed-resume-scraper.log", level=logging.INFO)
 
-    with open(resume_id_list, 'rb') as f:
+    with open(resume_id_list, 'rt') as f:
         reader = csv.reader(f)
         resume_ids = list(reader)
 
