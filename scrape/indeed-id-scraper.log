@@ -1,0 +1,12 @@
+INFO:root:Sleeping for time=2.297 seconds
+INFO:root:Search:Accounting in Location:New+York%2C+NY within Radius:25 at Start Page:1
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): www.indeed.com
+INFO:root:Sleeping for time=1.752 seconds
+INFO:root:Search:Accounting in Location:New+York%2C+NY within Radius:25 at Start Page:50
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): www.indeed.com
+INFO:root:Sleeping for time=1.49 seconds
+INFO:root:Search:Accounting in Location:New+York%2C+NY within Radius:25 at Start Page:100
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): www.indeed.com
+INFO:root:Sleeping for time=1.899 seconds
+INFO:root:Search:Accounting in Location:New+York%2C+NY within Radius:25 at Start Page:150
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): www.indeed.com
