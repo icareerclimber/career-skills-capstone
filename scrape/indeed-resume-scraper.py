@@ -23,6 +23,7 @@ import csv
 
 def main():
 
+    counter = 0
     city_name = sys.argv[1]
     resume_id_list = city_name + "_resume_ids.csv"
     out_file_name = city_name + "_resume_data.csv"
@@ -48,9 +49,12 @@ def main():
             basic_info = job_link_soup.find(name="div", attrs={"id":"basic_info_cell"})
             containers = job_link_soup.findAll(name="div", attrs={"class":"items-container"})
             if not containers: 
+                counter += 1
                 print("Resume not found: {}".format(resume_id))
                 logging.info("Resume not found: {}".format(resume_id))
-                break
+                if counter > 5:
+                    break
+                continue
             combined_list = []
             combined_list.append(basic_info)
             [combined_list.append(x) for x in containers]
