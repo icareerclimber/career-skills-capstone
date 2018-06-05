@@ -20,12 +20,15 @@ import csv
 # Process one city at a time. In order to do so,
 # get a distinct list of the resume ids for that city.
 # Update the variables below for the city name.
-city_name = "ny"
-resume_id_list = city_name + "_resume_ids.csv"
-out_file_name = city_name + "_resume_data.csv"
 
-def main():
+def main(city_name):
+
     logging.basicConfig(filename="indeed-resume-scraper.log", level=logging.INFO)
+
+    resume_id_list = city_name + "_resume_ids.csv"
+    out_file_name = city_name + "_resume_data.csv"
+
+    logging.info("Scraper for city:{}".format(city_name))
 
     with open(resume_id_list, 'rt') as f:
         reader = csv.reader(f)
@@ -46,7 +49,7 @@ def main():
             if not containers: 
                 print("Resume not found: {}".format(resume_id))
                 logging.info("Resume not found: {}".format(resume_id))
-                continue
+                break
             combined_list = []
             combined_list.append(basic_info)
             [combined_list.append(x) for x in containers]
@@ -73,6 +76,5 @@ def sleep_non_bot():
     time.sleep(sleep_time) #waits for a random time so that the website don't consider you as a bot
 
 
-# Usage: python indeed-scraper.py <search-term>
 if __name__ == "__main__":
     main()
