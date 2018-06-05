@@ -45,6 +45,7 @@ def main():
             containers = job_link_soup.findAll(name="div", attrs={"class":"items-container"})
             if not containers: 
                 print("Resume not found: {}".format(resume_id))
+                logging.info("Resume not found: {}".format(resume_id))
                 continue
             combined_list = []
             combined_list.append(basic_info)
