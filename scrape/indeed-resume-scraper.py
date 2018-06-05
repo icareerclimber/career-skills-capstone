@@ -21,10 +21,11 @@ import csv
 # get a distinct list of the resume ids for that city.
 # Update the variables below for the city name.
 
-def main(city_name):
+def main():
 
     logging.basicConfig(filename="indeed-resume-scraper.log", level=logging.INFO)
 
+    city_name = sys.argv[1]
     resume_id_list = city_name + "_resume_ids.csv"
     out_file_name = city_name + "_resume_data.csv"
 
