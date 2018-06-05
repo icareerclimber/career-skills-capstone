@@ -26,7 +26,6 @@ def main():
     counter = 0
     city_name = sys.argv[1]
     resume_id_list = city_name + "_resume_ids.csv"
-    out_file_name = city_name + "_resume_data.csv"
 
     logging.basicConfig(filename=city_name+"-indeed-resume-scraper.log", level=logging.INFO)
 
@@ -35,7 +34,7 @@ def main():
     with open(resume_id_list, 'rt') as f:
         reader = csv.reader(f)
         resume_ids = list(reader)
-
+        out_file_name = city_name + "_resume_data_" + str(resume_ids[0][0]) + ".csv"
     for resume_id in resume_ids:
         resume_id = resume_id[0]
         sleep_non_bot()
