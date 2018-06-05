@@ -23,7 +23,7 @@ import csv
 
 def main():
 
-    logging.basicConfig(filename="indeed-resume-scraper.log", level=logging.INFO)
+    logging.basicConfig(filename=city_name+"-indeed-resume-scraper.log", level=logging.INFO)
 
     city_name = sys.argv[1]
     resume_id_list = city_name + "_resume_ids.csv"
