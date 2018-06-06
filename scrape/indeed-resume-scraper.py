@@ -51,7 +51,7 @@ def main():
                 counter += 1
                 print("Resume not found: {}".format(resume_id))
                 logging.info("Resume not found: {}".format(resume_id))
-                if counter > 5:
+                if counter > 20:
                     break
                 continue
             combined_list = []
