@@ -24,7 +24,7 @@ import csv
 # into 2 steps so we can restart the system if the 
 # connection breaks. This function requires jobtitles.txt
 # in order to determine which jobs to scrape.
-location = {
+locations = {
 "Washington%2C+DC":25,
 "Atlanta%2C+GA":25,
 "Denver%2C+CO":50,
