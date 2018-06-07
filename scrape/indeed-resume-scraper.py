@@ -51,9 +51,10 @@ def main():
                 counter += 1
                 print("Resume not found: {}".format(resume_id))
                 logging.info("Resume not found: {}".format(resume_id))
-                if counter > 50:
+                if counter > 7:
                     break
                 continue
+            counter = 0
             combined_list = []
             combined_list.append(basic_info)
             [combined_list.append(x) for x in containers]
