@@ -15,58 +15,184 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style type="text/css">
+body {
+  font: 14px "Century Gothic", Futura, sans-serif;
+  margin: 20px;
+}
+
+input[type="date"]:before {
+    content: attr(placeholder) !important;
+    color: #aaa;
+    margin-right: 0.5em;
+}
+
+input[type="date"]:focus:before,
+  input[type="date"]:valid:before {
+    content: "";
+}>
     </style>
 
 
     <!-- Bootstrap -->
+    <!--
     <link href="bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="bootstrap-3.3.7-dist/css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet"/>
+    -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
 </head>
 <body>
   <div class="jumbotron">
     <div class="container">
-        <h2>Resume Assistant - Matching Your Skills to Jobs Intelligently</h2>
-	<h2>W210 - Final Project</h2>
+        <h2>iCareer Climber - Eliminate Guesswork from Your Career Planning</h2>
 	<p><a id="collapsible" class="btn btn-primary btn-lg" data-toggle="collapse" data-target="#projectinfo" role="button">Learn more &raquo;</a></p>
     </div>
   </div>
  
   <div class="container">
     <div id="projectinfo" class="collapse">
-      <p>Match uploaded resume to the perfect job</p>
+      <p>A roadmap that guides you to your ideal job in the next 5 years.</p>
     </div>
   </div>
   <div class="container">
-	<div class="row">
-	        <div class="col-lg-6">
-		  <div class="span6">
-			<form method="post" action="{{url "ResumeAssistant.HandleUpload"}}" enctype="multipart/form-data">
-				<p>
-					<label for="resume"><strong>Please Upload Your Resume:</strong></label>
-					<input type="file" name="resume" id="resume" class="span6">
-				</p>
-				<hr>
-				<input type="submit" value="Upload" class="btn btn-large btn-success">
-			</form>
-		  </div>
-		  <div class="span6">
-			<i>
-				Resume should be a text file less than 2 MB.
-			</i>
-		  </div>
-                </div>
-		<div class="col-lg-6">
-			<h2> Job Matches:</h2>
-			Data Scientist
-		</div>
-	</div>
-	<div class="row">
-		<h2> Analysis:</h2>
-		You will do a great job as data scientist because you know how to upload resume using this site.
-	</div>
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="span6">
+
+          <!-- React Root Element -->
+          <div id="root"></div>
+
+          <script type="text/babel">
+            class SelectDegree extends React.Component {
+              constructor(props) {
+                super(props);
+                this.state = {selectValue:'Select Degree'};
+                this.handleChange = this.handleChange.bind(this);
+              }
+
+              handleChange(e) {
+                this.setState({selectValue:e.target.value});
+              }
+
+              render() {
+                return (
+                  <div>
+                  <select name="SelectDegree" placeholder="Degree" value={this.state.selectValue} onChange={this.handleDegreeChange}>
+                    <option value="Select Degree" disabled selected>Select Degree</option>
+                    <option value="Associates">Associates</option>
+                    <option value="College">College</option>
+                    <option value="Master">Master</option>
+                    <option value="Ph.D.">Ph.D.</option>
+                    <option value="PostDoc">PostDoc</option>
+                  </select>
+                  <p>{'You selected ' + this.state.selectValue}</p>
+                  </div>
+                );
+              }
+            }
+
+            class SelectDate extends React.Component {
+              render() {
+                return (
+                  <div float="left">
+                  <input type='date' placeholder={this.props.value}>
+                  </input>
+                  </div>
+                );
+              }
+            }
+
+            class InputText extends React.Component {
+              render() {
+                return (
+                  <div>
+                  <input type='text' placeholder={this.props.value}>
+                  </input>
+                  </div>
+                );
+              }
+            }
+
+            class Summary extends React.Component {
+              render() {
+                return (
+                  <div>
+                  <h1>Summary of current input:</h1>
+                  <h2>Education</h2>
+                  <p>{this.props.degree}</p>
+                  </div>
+                );
+              }
+            }
+
+            class InputForm extends React.Component {
+              constructor(props) {
+                super(props);
+                this.handleDegreeChange = this.handleDegreeChange.bind(this);
+                this.handleSubmit = this.handleSubmit.bind(this);
+                this.state = {degree: '', eduFrom: '', eduTo: '', title: '', 
+                               company: '', loc: '', workFrom: '', workTo: ''}
+              }
+              handleDegreeChange(e) {
+                this.setState({degree:e.target.value});
+              } 
+              renderSelectDegree() {
+                return <SelectDegree />;
+              }
+              renderSelectDate(msg) {
+                return <SelectDate value={msg} />;
+              }
+              renderInputText(hint) {
+                return <InputText value={hint} />;
+              }
+              renderInputTextArea(hint) {
+                return <InputTextArea value={hint} />;
+              }
+
+              handleSubmit(e) {
+                e.preventDefault();
+                const data = new FormData(e.target);
+                fetch('/submit-edu-work.html', {
+                method: 'POST',
+                body: data,
+                });
+              }
+
+              render() {
+                return (
+                  <form onSubmit={this.handleSubmit}>
+                  <h2>Education</h2>
+                  {this.renderSelectDegree()}
+                  {this.renderSelectDate("From:")}
+                  {this.renderSelectDate("To:")}
+                  <h2>Work Experience</h2>
+                  {this.renderInputText("Title")}
+                  {this.renderInputText("Company")}
+                  {this.renderInputText("Location")}
+                  {this.renderSelectDate("From:")}
+                  {this.renderSelectDate("To:")}
+                  <Summary degree={this.state.degree} /> 
+                  <input type="submit" value="Submit" />
+                  </form>
+                  
+                );
+              }
+            }
+
+            ReactDOM.render(
+              <InputForm />,
+              document.getElementById('root')
+            );
+
+          </script>
+          <!-- End of React Code -->
+ 
+  </div>
+  </div>
   </div>
 
 
@@ -98,7 +224,18 @@
   </footer>
 
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<!-- <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script> -->
+
+<!-- Jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<!-- React -->
+<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
 
 </body>
 </html>
