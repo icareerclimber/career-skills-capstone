@@ -30,7 +30,7 @@ for key in parameters:
     print(key, parameters[key])
 
 
-print("Starting instantiate model", datetime.datetime.now())
+print("Starting train model", datetime.datetime.now())
 model = Doc2Vec(traindocs, 
                               dm=parameters["dm"],
                               vector_size=parameters["vector_size"],
@@ -39,15 +39,10 @@ model = Doc2Vec(traindocs,
                               min_count=parameters["min_count"],
                               sample=parameters["sample"],
                               workers=parameters["workers"],
-                              negative=parameters["negative"]
+                              negative=parameters["negative"],
+                              epochs=parameters["epochs"]
                              )
-print("End instantiate model", datetime.datetime.now())
-
-
-print("Starting train", datetime.datetime.now())
-model.train(traindocs, total_examples=parameters["total_examples"], epochs=parameters["epochs"])
-print("End train", datetime.datetime.now())
-
+print("End train model", datetime.datetime.now())
 
 print("Starting save model", datetime.datetime.now())
 
