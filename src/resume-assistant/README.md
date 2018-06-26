@@ -41,3 +41,30 @@ The directory structure of a generated Revel application:
 * The [Revel sample apps](http://revel.github.io/examples/index.html).
 * The [API documentation](https://godoc.org/github.com/revel/revel).
 
+# Run the resume-assistant Backend service
+
+## Docker instructions
+
+### Requirements
+Have the following installed in your local environment:
+
+- docker
+  - https://docs.docker.com/install/
+- docker-compose
+  - https://docs.docker.com/compose/install/
+
+### Instructions
+From the resume-assistant root directory run:
+```
+docker-compose up -d
+```
+
+#### Verify installation
+
+Check that the application is working by navigating in the brower to `localhost:8080/welcome`
+
+#### To stop the application
+From the resume-assistant root direction run:
+```
+docker-compose down
+```
