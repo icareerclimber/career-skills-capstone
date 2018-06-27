@@ -58,10 +58,14 @@ From the resume-assistant root directory run:
 ```
 docker-compose up -d
 ```
+To force a rebuild of the container:
+```
+docker-compose up -d --build
+```
 
 #### Verify installation
 
-Check that the application is working by navigating in the brower to `localhost:8080/welcome`
+Check that the application is working by navigating in the browser to `localhost:8080/welcome`
 
 #### To stop the application
 From the resume-assistant root direction run:
