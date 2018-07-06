@@ -1,0 +1,12 @@
+FROM python:3.6
+
+RUN mkdir -p ui/static
+RUN pip install Flask flask-cors
+COPY server.py ui/server.py
+COPY index.html ui/index.html
+COPY static/index.js ui/static/index.js
+COPY static/style.css ui/static/style.css
+
+WORKDIR /ui
+
+CMD python server.py

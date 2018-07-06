@@ -7,7 +7,17 @@ python -m SimpleHTTPServer 8000
 Then open brower to http://localhost:8000.
 ```
 
-To use flask server
+To build container and try locally
+
+```
+cd ui directory
+docker build -t flask-ui:0.1 -f Dockerfile.3.6 .
+docker run -it --net=host flask-ui:0.1
+
+Then point web browser to localhost:5000 (127.0.0.1 does not work)
+```
+
+To use flask server on local machine:
 
 export FLASK_APP=server.py
 export FLASK_ENV=development
