@@ -74,37 +74,52 @@ gcloud config set project <PROJECT_ID>
 gcloud config set compute/zone <COMPUTE_ZONE>
 ```
 ### Instructions
-- Set the PROJECT_ID environment variable
+1. Set the PROJECT_ID environment variable
 ```
 export PROJECT_ID="$(gcloud config get-value project -q)"
 ```
-- Build image
+2. Build image
 ```
 docker build -t gcr.io/${PROJECT_ID}/icareers-ui .
 ```
-- Upload image
+3. Upload image
 ```
 gcloud docker -- push gcr.io/${PROJECT_ID}/icareers-ui
 ```
-- Test running image locally (optional)
+4. Test running image locally (optional)
 ```
 docker run --rm -p 5000:5000 gcr.io/${PROJECT_ID}/icareers-ui
 curl http://localhost:5000
 ```
-- Create container cluster (this will take a few minutes)
+5. Create container cluster (this will take a few minutes)
 ```
 gcloud container clusters create icareers-cluster --num-nodes=1
 ```
-- Deploy application
+6. Deploy application
 ```
 kubectl run icareers-ui --image=gcr.io/${PROJECT_ID}/icareers-ui --port 5000
 ```
-- Expose application on internet
+7. Expose application on internet
 ```
 kubectl expose deployment icareers-ui --type=LoadBalancer --port 80 --target-port 5000
 ```
-- Wait for service to become available, External-IP field will be populated in output from following call when the service is available
+8. Wait for service to become available, External-IP field will be populated in output from following call when the service is available
 ```
 kubectl get service
 ```
-- Navigate broswer to service's external IP address.
+9. Navigate broswer to service's external IP address.
+
+### Cleanup
+The following steps will tear down your Kubernettes cluster
+1. Stop the service
+```
+kubectl delete service icareers-ui
+```
+2. Wait for service to be removed by monitoring the output of the following command
+```
+gcloud compute forwarding-rules list
+```
+3. Remove cluster
+```
+gcloud container clusters delete icareers-cluster
+```
