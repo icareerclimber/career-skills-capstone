@@ -1,8 +1,12 @@
-FROM python:2.7
+FROM python:3.6
 
-ADD . /var/www
-WORKDIR /var/www
+ADD . /ui
+WORKDIR /ui
 
-ENTRYPOINT python -m SimpleHTTPServer 8000
+RUN pip install -r requirements.txt
+ENV FLASK_APP server.py
 
-EXPOSE 8000
+ENTRYPOINT ["python"]
+CMD ["-m", "flask", "run", "--host=0.0.0.0"]
+
+EXPOSE 5000

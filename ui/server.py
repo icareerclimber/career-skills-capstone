@@ -28,3 +28,5 @@ def send_mock_response():
 
 if __name__ == "__main__":
     app.run()
+else:
+    app.run()
