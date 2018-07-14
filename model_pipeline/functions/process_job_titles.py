@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
+from collections import Counter
 
 
 # This function moves qualifiers from job title list to experience list
@@ -108,6 +109,22 @@ def remove_lead_trail_special_char(list_of_jobs):
         cleaned_list_of_jobs.append(job)
     return cleaned_list_of_jobs
 
+def remove_low_count_words(list_of_jobs):
+    list_jobs = [title.split() for title in list_of_jobs]
+    flattened_jobs_list = [y for x in list_jobs for y in x]
+    word_counts = Counter(flattened_jobs_list)
+    word_counts = pd.DataFrame(list(word_counts.items()))
+    word_counts.columns = ['word','word_count']
+    words_to_remove = word_counts[word_counts.word_count<50].word
+
+    cleaned_list_of_jobs = []
+    for job in list_of_jobs:
+        job_tokens = [c.strip() for c in re.split('(\W+)', job) if c.strip() != '']
+        job = [job_word for job_word in job_tokens if job_word not in words_to_remove]
+        cleaned_list_of_jobs.append(' '.join(job))
+    return cleaned_list_of_jobs, word_counts
+
+
 def clean_job(list_of_jobs):
     
     # Lowercase and strip whitespaces
@@ -127,7 +144,7 @@ def clean_job(list_of_jobs):
     clean_job_list = [job.replace("ass't",'assistant') for job in clean_job_list]
 
     # Replace special characters with space
-    clean_job_list = remove_special_characters( [':',';','#',"'"] , clean_job_list)
+    clean_job_list = remove_special_characters( [':',';','#',"'",'"'] , clean_job_list)
     
     # Remove specific words
     clean_job_list = trash_words(clean_job_list)
@@ -148,7 +165,7 @@ def clean_job(list_of_jobs):
     clean_job_list = get_forward_slash_longest_section(' -',clean_job_list)
 
     # Remove leading or trailing special characters
-    clean_job_lit = remove_lead_trail_special_char(clean_job_list)
+    clean_job_list = remove_lead_trail_special_char(clean_job_list)
 
     # Remove all text after - and (
     clean_job_list = remove_words_after_special_char(['(',')','[',']'], clean_job_list)
@@ -181,15 +198,18 @@ def clean_job(list_of_jobs):
     # Remove any numbers
     clean_job_list = [x for x in clean_job_list if not isinstance(x, int)]
 
+    # Clean job of leading or trailing special characters
+    clean_job_list = remove_lead_trail_special_char(clean_job_list)
+
+    # Remove all words that occur less than 20 times
+    clean_job_list, word_counts = remove_low_count_words(clean_job_list)
+
     # Merge the 2 rounds of qualifier grabbing
     experience_list = list(map(list.__add__, experience_list1, experience_list2))
-
-    # Clean job of leading or trailing special characters
-    clean_job_lit = remove_lead_trail_special_char(clean_job_list)
 
     # Sort the experience list
     sorted_experience_list = []
     for item in experience_list:
         sorted_experience_list.append(sorted(set(item)))
 
-    return list_of_jobs, clean_job_list, sorted_experience_list
+    return list_of_jobs, clean_job_list, sorted_experience_list, word_counts
