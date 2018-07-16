@@ -91,7 +91,10 @@ function updateGraph(data, jobValue, stateValue) {
       .key(function(d) { return d.experiences; })
       .rollup(function(v) { return {
             min: d3.min(v, function(d) { return d.salary; }),
+            lower: d3.quantile(v.map(function(d) { return d.salary;}).sort(d3.ascending),.25),
             median: d3.median(v, function(d) { return d.salary; }),
+            mean: d3.mean(v, function(d) { return d.salary; }),
+            upper: d3.quantile(v.map(function(d) { return d.salary;}).sort(d3.ascending),.75),
             max: d3.max(v, function(d) { return d.salary; }),
             count: v.length
       }; })
@@ -99,7 +102,8 @@ function updateGraph(data, jobValue, stateValue) {
       .entries(filteredData);
 
     // Set domain for x and y axis
-    x.domain([0, d3.max(filteredData, function(d) { return d.salary; })]);
+    x.domain([d3.min(dataGrouped, function(d) { return d.value.lower; })-1000, 
+        d3.max(dataGrouped, function(d) { return d.value.upper; })+1000]);
     y.domain(dataGrouped.map(function(d) { return d.key; })).padding(0.1);
 
     svg.selectAll(".axis").remove();
@@ -110,7 +114,7 @@ function updateGraph(data, jobValue, stateValue) {
     var xLines = g.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x).ticks(15).tickFormat(function(d) 
+        .call(d3.axisBottom(x).ticks(10).tickFormat(function(d) 
             { return "$" + parseInt(d / 1000) + "k"; }).tickSizeInner([-height]));
 
     // Create y-axis ticks and lines
@@ -130,18 +134,50 @@ function updateGraph(data, jobValue, stateValue) {
         .enter()
         .append("rect")
         .attr("class", "bar")
-        .attr("x", function(d) { return x(d.value.min); })
+        .attr("x", function(d) { return x(d.value.lower); })
         .attr("height", y.bandwidth())
         .attr("y", function(d) { return y(d.key); })
-        .attr("width", function(d) { return x(d.value.max) - x(d.value.min); })
+        .attr("width", function(d) { return x(d.value.upper) - x(d.value.lower); })
         .on("mousemove", function(d){
             tooltip
               .style("left", d3.event.pageX + "px")
               .style("top", d3.event.pageY + "px")
               .style("display", "inline-block")
               .html("Experience: " + (d.key) + "<br><span>Min: " + 
-                    formatMoney(d.value.min) + "</span><br><span> Median: " + 
-                    formatMoney(d.value.median) + "</span><br><span> Max: " + 
+                    formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " + 
+                    formatMoney(d.value.lower) + "</span><br><span> Median: " + 
+                    formatMoney(d.value.median) + "</span><br><span> Mean: " + 
+                    formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " + 
+                    formatMoney(d.value.upper) + "</span><br><span> Max: " + 
+                    formatMoney(d.value.max) + "</span><br><span> Count: " + 
+                    (d.value.count) + "</span>"
+                    );
+        })
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
+
+    g.selectAll(".medianbar").remove()
+
+    // Create bars for median
+    g.selectAll(".medianbar")
+        .data(dataGrouped)
+        .enter()
+        .append("rect")
+        .attr("class", "medianbar")
+        .attr("x", function(d) { return x(d.value.median-1); })
+        .attr("height", y.bandwidth())
+        .attr("y", function(d) { return y(d.key); })
+        .attr("width", 2)
+        .on("mousemove", function(d){
+            tooltip
+              .style("left", d3.event.pageX + "px")
+              .style("top", d3.event.pageY + "px")
+              .style("display", "inline-block")
+              .html("Experience: " + (d.key) + "<br><span>Min: " + 
+                    formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " + 
+                    formatMoney(d.value.lower) + "</span><br><span> Median: " + 
+                    formatMoney(d.value.median) + "</span><br><span> Mean: " + 
+                    formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " + 
+                    formatMoney(d.value.upper) + "</span><br><span> Max: " + 
                     formatMoney(d.value.max) + "</span><br><span> Count: " + 
                     (d.value.count) + "</span>"
                     );

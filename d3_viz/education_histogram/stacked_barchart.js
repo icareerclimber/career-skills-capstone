@@ -1,5 +1,27 @@
 // Borrowed from https://bl.ocks.org/mjfoster83/7c9bdfd714ab2f2e39dd5c09057a55a0
 
+// Load unique job titles json data
+d3.json("05_unique_jobs.json", function(error, json) {
+    if (error) throw error;
+
+    // Populate values in the job title dropdown using data from the json
+    var options = jobDrop
+        .selectAll('option')
+        .data(json.map( function (d) {return d.cleaned_job_title} )).enter()
+        .append('option')
+        .text(function (d) { return d; });
+
+});
+
+var salaryData = []
+// Load the salary json data
+d3.json("05_salary_data_bar_chart.json", function(error, json) {
+    if (error) throw error;
+    salaryData = json.data
+
+    updateGraph(salaryData, 'accountant', 'Ohio')
+});
+
 // Set the margins
 var margin = {top: 100, right: 100, bottom: 100, left: 100},
   width = 850 - margin.left - margin.right,
