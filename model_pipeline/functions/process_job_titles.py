@@ -31,7 +31,7 @@ def parse_experience(list_of_jobs):
 def trash_words(list_of_jobs):
 
     # Words that will be removed from job title
-    trash_words_list = ['jc', 'mts', 'level']
+    trash_words_list = ['jc45', 'jc50', 'jc65', 'mts', 'level']
     cleaned_list_of_jobs = []
     for job in list_of_jobs:
         job_tokens = [c.strip() for c in re.split('(\W+)', job) if c.strip() != '']

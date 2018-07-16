@@ -29,6 +29,11 @@ text {
 }
 .bar {
 }
+.bar:hover {
+  /*fill: #FFDA1A;*/
+  opacity: 0.5;
+  transition: fill 0.15s;
+}
 .axis path,
 .axis line {
   /*fill: none;*/
