@@ -1,5 +1,52 @@
 //Borrowed from https://bl.ocks.org/alandunning/7008d0332cc28a826b37b3cf6e7bd998
 
+// Load unique job titles json data
+d3.json("05_unique_jobs.json", function(error, json) {
+    if (error) throw error;
+
+    // Populate values in the job title dropdown using data from the json
+    var options = jobDrop
+        .selectAll('option')
+        .data(json.map( function (d) {return d.cleaned_job_title} )).enter()
+        .append('option')
+        .text(function (d) { return d; });
+
+});
+
+// Load unique states json data
+d3.json("05_unique_states.json", function(error, json) {
+    if (error) throw error;
+
+    // Populate values in the state dropdown using data from the json
+    var options = stateDrop
+        .selectAll('option')
+        .data(json.map( function (d) {return d.state} )).enter()
+        .append('option')
+        .text(function (d) { return d; });
+
+});
+
+var salaryData = []
+// Load the salary json data
+d3.json("05_salary_data_bar_chart.json", function(error, json) {
+    if (error) throw error;
+    salaryData = json.data
+
+    updateGraph(salaryData, 'accountant', 'Ohio')
+});
+
+// Attach the job title dropdown to the div
+var jobDrop = d3.select("#jobDropdown")
+    .append('select')
+    .attr('class','select')
+    .on('change',onChange);
+
+// Attach the state dropdown to the div
+var stateDrop = d3.select("#stateDropdown")
+    .append('select')
+    .attr('class','select')
+    .on('change',onChange);
+
 // Set the margins
 var margin = {top: 100, right: 100, bottom: 100, left: 100},
   width = 850 - margin.left - margin.right,
@@ -25,17 +72,22 @@ var y = d3.scaleBand().range([height, 0]);
 // Set location for graph
 var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  
-// Load the salary json data
-d3.json("salary_data.json", function(error, data) {
-    if (error) throw error;
 
-    jobs = data.data.cleaned_job_title
+function onChange() {
+    var jobValue = jobDrop.node().value;
+    console.log(jobValue);
+    var stateValue = stateDrop.node().value;
+    console.log(stateValue);
+    updateGraph(salaryData, jobValue, stateValue)
+};
 
-    var unique = [...new Set(data.data.map(item => item.Group))];
-  
+function updateGraph(data, jobValue, stateValue) {
+
+    var filteredData = data.filter(function(d) {
+        return (d.cleaned_job_title == jobValue) && (d.state == stateValue) });
+
     // Group the data by name and experience level
-    var dataGrouped = d3.nest()
+    dataGrouped = d3.nest()
       .key(function(d) { return d.experiences; })
       .rollup(function(v) { return {
             min: d3.min(v, function(d) { return d.salary; }),
@@ -44,20 +96,25 @@ d3.json("salary_data.json", function(error, data) {
             count: v.length
       }; })
       .sortKeys(d3.descending)
-      .entries(data.data);
+      .entries(filteredData);
 
     // Set domain for x and y axis
-    x.domain([0, d3.max(data.data, function(d) { return d.salary; })]);
+    x.domain([0, d3.max(filteredData, function(d) { return d.salary; })]);
     y.domain(dataGrouped.map(function(d) { return d.key; })).padding(0.1);
 
+    svg.selectAll(".axis").remove();
+    svg.selectAll(".x").remove();
+    svg.selectAll(".y").remove();
+    
     // Create x-axis ticks and lines
-    g.append("g")
+    var xLines = g.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x).ticks(15).tickFormat(function(d) { return "$" + parseInt(d / 1000) + "k"; }).tickSizeInner([-height]));
+        .call(d3.axisBottom(x).ticks(15).tickFormat(function(d) 
+            { return "$" + parseInt(d / 1000) + "k"; }).tickSizeInner([-height]));
 
     // Create y-axis ticks and lines
-    g.append("g")
+    var yLines = g.append("g")
         .attr("class", "y axis")
         .call(d3.axisLeft(y));
 
@@ -65,10 +122,13 @@ d3.json("salary_data.json", function(error, data) {
     var formatSuffix = d3.format(".2s"),
         formatMoney = function(d) { return "$" + formatSuffix(d); }
 
+    g.selectAll(".bar").remove()
+
     // Create bars for graph and create tooltip
     g.selectAll(".bar")
         .data(dataGrouped)
-        .enter().append("rect")
+        .enter()
+        .append("rect")
         .attr("class", "bar")
         .attr("x", function(d) { return x(d.value.min); })
         .attr("height", y.bandwidth())
@@ -76,8 +136,8 @@ d3.json("salary_data.json", function(error, data) {
         .attr("width", function(d) { return x(d.value.max) - x(d.value.min); })
         .on("mousemove", function(d){
             tooltip
-              .style("left", d3.event.pageX - 50 + "px")
-              .style("top", d3.event.pageY - 90 + "px")
+              .style("left", d3.event.pageX + "px")
+              .style("top", d3.event.pageY + "px")
               .style("display", "inline-block")
               .html("Experience: " + (d.key) + "<br><span>Min: " + 
                     formatMoney(d.value.min) + "</span><br><span> Median: " + 
@@ -87,49 +147,4 @@ d3.json("salary_data.json", function(error, data) {
                     );
         })
         .on("mouseout", function(d){ tooltip.style("display", "none");});
-});
-
-var selector = d3.select("#drop")
-    .append("select")
-    .attr("id","dropdown")
-    .on("change", function(d){
-        console.log("changed")
-        // selection = document.getElementById("dropdown");
-
-        // y.domain([0, d3.max(data, function(d){
-        //     return +d[selection.value];})]);
-
-        // yAxis.scale(y);
-
-        // d3.selectAll(".rectangle")
-        //     .transition()
-        //     .attr("height", function(d){
-        //         return height - y(+d[selection.value]);
-        //     })
-        //     .attr("x", function(d, i){
-        //         return (width / data.length) * i ;
-        //     })
-        //     .attr("y", function(d){
-        //         return y(+d[selection.value]);
-        //     })
-        //     .ease("linear")
-        //     .select("title")
-        //     .text(function(d){
-        //         return d.State + " : " + d[selection.value];
-        //     });
-  
-        // d3.selectAll("g.y.axis")
-        //     .transition()
-        //     .call(yAxis);
-
-     });
-
-selector.selectAll("option")
-  .data(elements)
-  .enter().append("option")
-  .attr("value", function(d){
-    return d;
-  })
-  .text(function(d){
-    return d;
-  })
+};
