@@ -110,6 +110,7 @@ function updateGraph(data, jobValue) {
         })
         .enter()
         .append("rect")
+        .attr("class", "bar")
         .attr("data", function(d) {
             var data = {};
             data["key"] = d.key;
