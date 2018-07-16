@@ -32,7 +32,7 @@ d3.json("05_salary_data_bar_chart.json", function(error, json) {
     if (error) throw error;
     salaryData = json.data
 
-    updateGraph(salaryData, 'accountant', 'Ohio')
+    updateGraph(salaryData, 'account executive', 'Alabama')
 });
 
 // Attach the job title dropdown to the div
@@ -110,21 +110,25 @@ function updateGraph(data, jobValue, stateValue) {
     svg.selectAll(".x").remove();
     svg.selectAll(".y").remove();
     
+    // Number formatter
+    var formatSmallSuffix = d3.format(".2s"),
+        formatLargeSuffix = d3.format(".3s"),
+        formatMoney = function(d) {
+            if (d < 100000) { return "$" + formatSmallSuffix(d); }
+            else { return "$" + formatLargeSuffix(d); }
+        }
+
     // Create x-axis ticks and lines
     var xLines = g.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x).ticks(10).tickFormat(function(d) 
-            { return "$" + parseInt(d / 1000) + "k"; }).tickSizeInner([-height]));
+            { return formatMoney(d); }).tickSizeInner([-height]));
 
     // Create y-axis ticks and lines
     var yLines = g.append("g")
         .attr("class", "y axis")
         .call(d3.axisLeft(y));
-
-    // Number formatter
-    var formatSuffix = d3.format(".2s"),
-        formatMoney = function(d) { return "$" + formatSuffix(d); }
 
     g.selectAll(".bar").remove()
 
@@ -150,7 +154,7 @@ function updateGraph(data, jobValue, stateValue) {
                     formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " + 
                     formatMoney(d.value.upper) + "</span><br><span> Max: " + 
                     formatMoney(d.value.max) + "</span><br><span> Count: " + 
-                    (d.value.count) + "</span>"
+                    (d.value.count)
                     );
         })
         .on("mouseout", function(d){ tooltip.style("display", "none");});
@@ -163,10 +167,10 @@ function updateGraph(data, jobValue, stateValue) {
         .enter()
         .append("rect")
         .attr("class", "medianbar")
-        .attr("x", function(d) { return x(d.value.median-1); })
+        .attr("x", function(d) { return x(d.value.median); })
         .attr("height", y.bandwidth())
         .attr("y", function(d) { return y(d.key); })
-        .attr("width", 2)
+        .attr("width", 1)
         .on("mousemove", function(d){
             tooltip
               .style("left", d3.event.pageX + "px")
@@ -179,7 +183,7 @@ function updateGraph(data, jobValue, stateValue) {
                     formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " + 
                     formatMoney(d.value.upper) + "</span><br><span> Max: " + 
                     formatMoney(d.value.max) + "</span><br><span> Count: " + 
-                    (d.value.count) + "</span>"
+                    (d.value.count)
                     );
         })
         .on("mouseout", function(d){ tooltip.style("display", "none");});
