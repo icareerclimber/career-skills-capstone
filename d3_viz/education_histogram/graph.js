@@ -2,13 +2,15 @@
 
 // Load the salary json data
 var allData = []
+var rankedSubjects = []
 d3.json("04_edu_data_bar_chart.json", function(error, json) {
-    if (error) throw error;
-    allData = json
+    d3.csv("04_ranked_subjects.csv", function(error, data) {
+        if (error) throw error;
+        allData = json
+        rankedSubjects = data
 
-    updateGraph(allData, 'account executive')
-
-});
+        updateGraph(allData, 'account executive')
+})});
 
 // Load unique job titles json data
 d3.csv("04_unique_jobs.csv", function(error, data) {
@@ -37,10 +39,8 @@ function updateGraph(data, jobValue) {
     var filteredData = data.filter(function(d) {
         return (d.cleaned_job_title == jobValue) });
 
-    var group_with_dups = [].concat.apply([], filteredData.map(function(d) {return Object.keys(d).slice(2)}))
-    var group = group_with_dups.filter(function(elem, pos) {
-        return group_with_dups.indexOf(elem) == pos;
-    });
+    var group = rankedSubjects.filter(function(d) {
+        return (d.cleaned_job_title == jobValue) }).map( function(d) {return d.subject_name });
 
     var layers = d3.stack()
         .keys(group)

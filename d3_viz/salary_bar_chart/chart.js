@@ -167,10 +167,10 @@ function updateGraph(data, jobValue, stateValue) {
         .enter()
         .append("rect")
         .attr("class", "medianbar")
-        .attr("x", function(d) { return x(d.value.median); })
+        .attr("x", function(d) { return x(d.value.median)-1; })
         .attr("height", y.bandwidth())
         .attr("y", function(d) { return y(d.key); })
-        .attr("width", 1)
+        .attr("width", 2)
         .on("mousemove", function(d){
             tooltip
               .style("left", d3.event.pageX + "px")
