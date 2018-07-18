@@ -5,5 +5,3 @@ These files are required to run the viz (loaded to gcloud careers_capstone/edu_b
 04_edu_data_bar_chart.json
 
 04_unique_jobs.csv
-
-04_ranked_subjects.csv
