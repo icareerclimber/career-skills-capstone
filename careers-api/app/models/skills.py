@@ -5,6 +5,8 @@ import re, unicodedata
 import nltk
 import contractions
 import numpy as np
+from sklearn.preprocessing import FunctionTransformer
+from sklearn.pipeline import Pipeline
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -14,7 +16,8 @@ def preprocess_list(list_of_summaries):
     lemmatizer = WordNetLemmatizer()
     stop_words = set(stopwords.words('english'))
 
-    for summary_text in list_of_summaries:
+    for sample in list_of_summaries:
+        summary_text = sample[0]
         summary_text = summary_text.lower()
         summary_text = re.sub(r'[^\w\s]', '', summary_text)
         summary_text = contractions.fix(summary_text)
@@ -35,15 +38,16 @@ def preprocess_list(list_of_summaries):
 
         list_preprocessed_summary_text.append(summary_text)
 
-    return list_preprocessed_summary_text
+    return np.array(list_preprocessed_summary_text).reshape(-1,)
 
 @bp.route('/similar_jobs', methods=['POST'])
 def get_similarity():
     json = request.get_json()
     descriptions = [exp['description'] for exp in json['experience']]
-    preprocesed_descriptions = preprocess_list(descriptions)
-    vects = vectorizor.transform(preprocesed_descriptions)
-    prediction = model.predict_proba(vects).reshape(-1,)
+    # preprocesed_descriptions = preprocess_list(descriptions)
+    # vects = vectorizor.transform(preprocesed_descriptions)
+    # prediction = model.predict_proba(vects).reshape(-1,)
+    prediction = pipeline.predict_proba(descriptions).reshape(-1,)
     sorted_predictions = sorted(zip(prediction, model.classes_), reverse=True)
     results = [{'title': c, 'probability': p} for p, c in sorted_predictions]
     return jsonify({'results': results})
@@ -65,6 +69,9 @@ def load_models():
         model = pickle.load(f)
     with open("./app/models/20180703161959266229_tdidf_vect.pkl","rb") as f:
         vectorizor = pickle.load(f)
+
+    preprocess = FunctionTransformer(preprocess_list)
+    pipeline = Pipeline([('preprocess', preprocess), ('tfidf', vectorizor), ('nb', model)])
 
     num_skills = 10
     max_feature_args = np.argsort(model.feature_log_prob_, 1)[:,-num_skills:]
