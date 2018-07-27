@@ -126,7 +126,7 @@ class WorkFrom extends React.Component {
 
   render() {
     return (
-      <div float="left">
+      <div>
       <input type='date' placeholder={this.props.value} onChange={this.handleWorkFromChange}/>
       </div>
     );
@@ -165,9 +165,29 @@ class WorkTo extends React.Component {
   render() {
     return (
       <div float="left">
-      <input type='date' placeholder={this.props.value} onChange={this.handleWorkToChange}/>
+        <input type='date' placeholder={this.props.value} onChange={this.handleWorkToChange}/>
       </div>
     );
+  }
+}
+
+class WorkDescription extends React.Component {
+  constructor() {
+    super();
+    this.handleWorkDescriptionChange = this.handleWorkDescriptionChange.bind(this)
+  }
+
+  handleWorkDescriptionChange(e) {
+    this.props.appHandleWorkDescriptionChange(e.target.value)
+  }
+
+  render() {
+    return (
+      <div className="col-lg-1">
+        <h4 htmlFor="job description">Job Description:</h4>
+        <textarea float="none" rows='5' cols='100' onChange={this.handleWorkDescriptionChange}/>
+      </div>
+    )
   }
 }
 
@@ -184,7 +204,7 @@ class AddEducation extends React.Component {
   render() {
     return (
       <div>
-        <button type="button" onClick={this.handleClick}>Add</button>
+        <button type="button" className="btn btn-success" onClick={this.handleClick}>Add</button>
       </div>
     )
   }
@@ -203,7 +223,7 @@ class AddWork extends React.Component {
   render() {
     return (
       <div>
-        <button type="button" onClick={this.handleClick}>Add</button>
+        <button type="button" className="btn btn-success" onClick={this.handleClick}>Add</button>
       </div>
     )
   }
@@ -222,7 +242,7 @@ class RemoveLastEducation extends React.Component {
   render() {
     return (
       <div>
-        <button type="button" onClick={this.handleClick}>Remove Last Added</button>
+        <button type="button" className="btn btn-warning" onClick={this.handleClick}>Remove Last Added</button>
       </div>
     )
   }
@@ -241,7 +261,7 @@ class RemoveLastWork extends React.Component {
   render() {
     return (
       <div>
-        <button type="button" onClick={this.handleClick}>Remove Last Added</button>
+        <button type="button" className="btn btn-warning" onClick={this.handleClick}>Remove Last Added</button>
       </div>
     )
   }
@@ -273,6 +293,7 @@ const WorkStyle = {
 class Work extends React.Component {
   render() {
     return (
+      <div className="col">
       <div className="row" style={WorkStyle}>
         <Title appHandleTitleChange={this.props.appHandleTitleChange} />
         <Company appHandleCompanyChange={this.props.appHandleCompanyChange}/>
@@ -280,6 +301,10 @@ class Work extends React.Component {
         <WorkTo appHandleWorkToChange={this.props.appHandleWorkToChange}/>
         <AddWork handleClick={this.props.appHandleAddWork}/>
         <RemoveLastWork handleClick={this.props.appHandleRemoveLastWork}/>
+      </div>
+      <div className="row" style={WorkStyle}>
+        <WorkDescription appHandleWorkDescriptionChange={this.props.appHandleWorkDescriptionChange}/>
+      </div>
       </div>
     )
   }
@@ -326,6 +351,9 @@ class Summary extends React.Component {
                 <div>
                   {m.To}
                 </div>
+                <div>
+                  {m.Description}
+                </div>
               </li>
             )
           })}
@@ -357,6 +385,7 @@ const MockSummary = {
         Company: "Motorola",
         From: "2010-03-06",
         To: "2011-05-09",
+        Description: "creat web page"
       }
   ]
 }
@@ -377,6 +406,7 @@ class App extends React.Component {
       currentCompany: "",
       currentWorkFrom: "",
       currentWorkTo: "",
+      currentWorkDescription: "",
       result:"no response yet"
     }
     this.handleDegreeChange=this.handleDegreeChange.bind(this)
@@ -389,6 +419,7 @@ class App extends React.Component {
     this.handleCompanyChange=this.handleCompanyChange.bind(this)
     this.handleWorkFromChange=this.handleWorkFromChange.bind(this)
     this.handleWorkToChange=this.handleWorkToChange.bind(this)
+    this.handleWorkDescriptionChange=this.handleWorkDescriptionChange.bind(this)
     this.handleAddWork=this.handleAddWork.bind(this)
     this.handleRemoveLastWork=this.handleRemoveLastWork.bind(this)
     this.handleSubmit=this.handleSubmit.bind(this)
@@ -442,6 +473,12 @@ class App extends React.Component {
     })
   }
 
+  handleWorkDescriptionChange(m) {
+    this.setState({
+      currentWorkDescription: m
+    })
+  }
+
   handleAddEducation() {
     const sum = this.state.summary
     sum.Education.push({
@@ -467,7 +504,8 @@ class App extends React.Component {
       Title: this.state.currentTitle,
       Company: this.state.currentCompany,
       From: this.state.currentWorkFrom,
-      To: this.state.currentWorkTo
+      To: this.state.currentWorkTo,
+      Description: this.state.currentWorkDescription
     })
     this.setState({
       summary: sum
@@ -476,7 +514,8 @@ class App extends React.Component {
       currentTitle: "",
       currentCompany: "",
       currentWorkFrom: "",
-      currentWorkTo: ""
+      currentWorkTo: "",
+      currentWorkDescription: ""
     })
   }
 
@@ -487,7 +526,7 @@ class App extends React.Component {
       currentSelectDegree: last.Degree,
       currentSchool: last.School,
       currentFrom: last.From,
-      currentTo: last.to
+      currentTo: last.To
     })
     sum.Education.splice(-1,1)
     this.setState({summary: sum })
@@ -500,7 +539,8 @@ class App extends React.Component {
       currentTitle: last.Title,
       currentCompany: last.Company,
       currentWorkFrom: last.From,
-      currentWorkTo: last.to
+      currentWorkTo: last.To,
+      currentWorkDescription: last.Description
     })
     sum.Work.splice(-1,1)
     this.setState({summary: sum })
@@ -516,12 +556,12 @@ class App extends React.Component {
   render() {
     return (
       <div className="app">
-        <Summary summary={this.state.summary} testMessage={this.state.currentSelectedDegree +" " + this.state.currentSchool + " " + this.state.currentFrom + " " + this.state.currentTo}/>
+        <Summary summary={this.state.summary} testMessage={this.state.currentSelectedDegree +" " + this.state.currentSchool + " " + this.state.currentFrom + " " + this.state.currentTo + this.state.currentDescription}/>
         <h1>Education</h1>
         <Education title="Education" appHandleDegreeChange={this.handleDegreeChange} appHandleSchoolChange={this.handleSchoolChange} appHandleFromChange={this.handleFromChange} appHandleToChange={this.handleToChange} appHandleAddEducation={this.handleAddEducation} appHandleRemoveLastEducation={this.handleRemoveLastEducation} currentSummary = {this.state.summary.Education}/>
         <h1>Work</h1>
-        <Work title="Work" appHandleTitleChange={this.handleTitleChange} appHandleCompanyChange={this.handleCompanyChange} appHandleWorkFromChange={this.handleWorkFromChange} appHandleWorkToChange={this.handleWorkToChange} appHandleAddWork={this.handleAddWork} appHandleRemoveLastWork={this.handleRemoveLastWork} currentSummary = {this.state.summary.Education}/>
-        <button type="button" onClick={this.handleSubmit}> Submit Resume </button>
+        <Work title="Work" appHandleTitleChange={this.handleTitleChange} appHandleCompanyChange={this.handleCompanyChange} appHandleWorkFromChange={this.handleWorkFromChange} appHandleWorkToChange={this.handleWorkToChange} appHandleWorkDescriptionChange={this.handleWorkDescriptionChange} appHandleAddWork={this.handleAddWork} appHandleRemoveLastWork={this.handleRemoveLastWork} currentSummary = {this.state.summary.Work}/>
+        <button type="button" className="btn btn-primary" onClick={this.handleSubmit}> Submit Resume </button>
         <p>{this.state.result}</p>
       </div>
     )

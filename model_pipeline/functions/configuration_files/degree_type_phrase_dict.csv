@@ -1,0 +1,47 @@
+keyword,type
+a a,associates
+a s,associates
+advanced,unknown
+b ,bachelors
+college coursework,some undergraduate
+college diploma in,unknown diploma
+degree,unknown diploma
+diploma,unknown diploma
+executive education,certificate
+executive leadership,certificate
+graduate certificate,certificate
+graduate courses,some graduate
+graduate coursework,some graduate
+graduate diploma,masters
+graduate level courses,some graduate
+graduate studies,some graduate
+graduate study,some graduate
+high school,hs diploma
+in progress,some undergraduate
+leadership training,certificate
+lean six,certificate
+ll b,bachelors
+m ,masters
+na in,some undergraduate
+no degree,some undergraduate
+non degree,some undergraduate
+none in,some undergraduate
+p h d,doctorate
+ph d,doctorate
+post doc,doctorate
+post graduate,masters
+postgraduate degree,masters
+postgraduate diploma,masters
+professional diploma,unknown diploma
+six sigma,certificate
+some college,some undergraduate
+some coursework,some undergraduate
+some high school,some high school
+studies in,some undergraduate
+study abroad,study abroad
+technical degree,unknown diploma
+technical diploma,unknown diploma
+technical training,certificate
+training,certificate
+undergraduate,some undergraduate
+week long,certificate

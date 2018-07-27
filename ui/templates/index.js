@@ -315,7 +315,7 @@ class App extends React.Component {
         <Summary summary={this.state.summary} testMessage={this.state.currentSelectedDegree +" " + this.state.currentSchool + " " + this.state.currentFrom + " " + this.state.currentTo}/>
         <h1>Education</h1>
         <Education title="Education" appHandleDegreeChange={this.handleDegreeChange} appHandleSchoolChange={this.handleSchoolChange} appHandleFromChange={this.handleFromChange} appHandleToChange={this.handleToChange} appHandleAddEducation={this.handleAddEducation} appHandleRemoveLastEducation={this.handleRemoveLastEducation} currentSummary = {this.state.summary.Education}/>
-        <button type="button" onClick={this.handleSubmit}> Submit Education </button>
+        <button type="button" class="btn btn-primary" onClick={this.handleSubmit}> Submit Education </button>
         <p>{this.state.result}</p>
       </div>
     )

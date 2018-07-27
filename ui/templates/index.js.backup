@@ -235,10 +235,6 @@ class App extends React.Component {
       currentSchool:"",
       currentFrom:"",
       currentTo:"",
-      currentSelectedTitle: "",
-      currentCompany: "",
-      currentWorkFrom: "",
-      currentWorkTo: "",
       result:"no response yet"
     }
     this.handleDegreeChange=this.handleDegreeChange.bind(this)
@@ -247,12 +243,6 @@ class App extends React.Component {
     this.handleToChange=this.handleToChange.bind(this)
     this.handleAddEducation=this.handleAddEducation.bind(this)
     this.handleRemoveLastEducation=this.handleRemoveLastEducation.bind(this)
-    this.handleTitleChange=this.handleTitleChange.bind(this)
-    this.handleCompanyChange=this.handleCompanyChange.bind(this)
-    this.handleWorkFromChange=this.handleWorkFromChange.bind(this)
-    this.handleWorkToChange=this.handleWorkToChange.bind(this)
-    this.handleAddWork=this.handleAddWork.bind(this)
-    this.handleRemoveLastWork=this.handleRemoveLastWork.bind(this)
     this.handleSubmit=this.handleSubmit.bind(this)
   }
 
@@ -262,21 +252,9 @@ class App extends React.Component {
     })
   }
 
-  handleTitleChange(m) {
-    this.setState({
-      currentSelectedTitle: m
-    })
-  }
-
   handleSchoolChange(m) {
     this.setState({
       currentSchool: m
-    })
-  }
-
-  handleCompanyChange(m) {
-    this.setState({
-      currentCompany: m
     })
   }
 
@@ -286,40 +264,28 @@ class App extends React.Component {
     })
   }
 
-  handleWorkFromChange(m) {
-    this.setState({
-      currentWorkFrom: m
-    })
-  }
-
   handleToChange(m) {
     this.setState({
       currentTo: m
     })
   }
 
-  handleWorkToChange(m) {
-    this.setState({
-      currentWorkTo: m
-    })
-  }
-
-  handleAddWork() {
+  handleAddEducation() {
     const sum = this.state.summary
-    sum.Work.push({
-      Title: this.state.currentSelectTitle,
-      Company: this.state.currentCompany,
-      From: this.state.currentWorkFrom,
-      To: this.state.currentWorkTo
+    sum.Education.push({
+      Degree: this.state.currentSelectDegree,
+      School: this.state.currentSchool,
+      From: this.state.currentFrom,
+      To: this.state.currentTo
     })
     this.setState({
       summary: sum
     })
     this.setState({
-      currentSelectedTitle: "",
-      currentCompany: "",
-      currentWorkFrom: "",
-      currentWorkTo: ""
+      currentSelectDegree: "",
+      currentSchool: "",
+      currentFrom: "",
+      currentTo: ""
     })
   }
 
@@ -336,19 +302,6 @@ class App extends React.Component {
     this.setState({summary: sum })
   }
 
-  handleRemoveLastWork() {
-    const sum = this.state.summary
-    const last = sum.Work[sum.Work.length - 1]
-    this.setState({
-      currentSelectedTitle: last.Title,
-      currentCompany: last.Company,
-      currentWorkFrom: last.From,
-      currentWorkTo: last.to
-    })
-    sum.Work.splice(-1,1)
-    this.setState({summary: sum })
-  }
-
   handleSubmit() {
     axios.get('http://localhost:5000/MockResponse', {
             headers: { 'crossOrigin': true },
@@ -362,8 +315,7 @@ class App extends React.Component {
         <Summary summary={this.state.summary} testMessage={this.state.currentSelectedDegree +" " + this.state.currentSchool + " " + this.state.currentFrom + " " + this.state.currentTo}/>
         <h1>Education</h1>
         <Education title="Education" appHandleDegreeChange={this.handleDegreeChange} appHandleSchoolChange={this.handleSchoolChange} appHandleFromChange={this.handleFromChange} appHandleToChange={this.handleToChange} appHandleAddEducation={this.handleAddEducation} appHandleRemoveLastEducation={this.handleRemoveLastEducation} currentSummary = {this.state.summary.Education}/>
-        <Work title="Work" appHandleTitleChange={this.handleTitleChange} appHandleCompanyChange={this.handleCompanyChange} appHandleWorkFromChange={this.handleWorkFromChange} appHandleWorkToChange={this.handleWorkToChange} appHandleAddWork={this.handleAddWork} appHandleRemoveLastWork={this.handleRemoveLastWork} currentSummary = {this.state.summary.Education}/>
-        <button type="button" onClick={this.handleSubmit}> Submit Resume </button>
+        <button type="button" onClick={this.handleSubmit}> Submit Education </button>
         <p>{this.state.result}</p>
       </div>
     )
