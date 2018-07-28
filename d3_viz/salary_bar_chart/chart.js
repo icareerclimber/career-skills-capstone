@@ -32,7 +32,7 @@ d3.json("05_salary_data_bar_chart.json", function(error, json) {
     if (error) throw error;
     salaryData = json.data
 
-    updateGraph(salaryData, 'account executive', 'Alabama')
+    updateGraph(salaryData, 'account executive', 'All')
 });
 
 // Attach the job title dropdown to the div
@@ -84,7 +84,8 @@ function onChange() {
 function updateGraph(data, jobValue, stateValue) {
 
     var filteredData = data.filter(function(d) {
-        return (d.cleaned_job_title == jobValue) && (d.state == stateValue) });
+        return (d.cleaned_job_title == jobValue) && 
+        ((d.state == stateValue) | ('All' == stateValue)) });
 
     // Group the data by name and experience level
     dataGrouped = d3.nest()
