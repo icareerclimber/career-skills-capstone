@@ -1,4 +1,4 @@
-var job = 'ceo'
+var job = 'ux designer'
 
 // Get JSON data
 treeJSON = d3.json("data/"+job.replace(/ /g, "_")+"_hierarchy.json", function(error, treeData) {

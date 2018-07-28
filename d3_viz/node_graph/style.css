@@ -13,8 +13,10 @@
 }
  
 .node text {
-  font-size:16px; 
+  font-size:20px; 
   font-family:'Fira Sans', sans-serif;
+  font-weight: 500;
+  color: #081F2C;
 }
  
 .link {
