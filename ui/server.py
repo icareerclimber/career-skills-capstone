@@ -1,4 +1,8 @@
 from flask import Flask, request, send_from_directory, render_template
+
+import urllib3
+import json
+
 #from flask_cors import CORS
 
 app = Flask(__name__, static_url_path='')
@@ -24,7 +28,19 @@ def root():
 def send_mock_response():
      return "Your next three steps in career are manager, director, and ceo."
 
-
+@app.route('/postSummary')
+def returnMatches():
+     http = urllib3.PoolManager()
+     #data = {"experience":[{"title": "software engineeer", "description": "i build data models"}]}
+     print(request.headers)
+     title = request.headers.get('x-career-climber-lastTitle')
+     description = request.headers.get('x-career-climber-lastDescription')
+     data = {"experience":[{"title": title, "description": description}]}
+     r = http.request(
+       "POST", "http://localhost:5000/model/similar_jobs", 
+       body=json.dumps(data),
+       headers={'Content-Type': 'application/json'})
+     return '<div>' + str(r.data) + '</div>'
 
 if __name__ == "__main__":
     app.run()

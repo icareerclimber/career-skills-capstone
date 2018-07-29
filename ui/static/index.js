@@ -547,8 +547,13 @@ class App extends React.Component {
   }
 
   handleSubmit() {
-    axios.get('http://localhost:5000/MockResponse', {
-            headers: { 'crossOrigin': true },
+    //axios.get('http://localhost:8081/MockResponse', {
+    const sum = this.state.summary
+    const last = sum.Work[sum.Work.length - 1]
+    const lastTitle = last.Title
+    const lastDescription = last.Description
+    axios.get('http://localhost:8081/postSummary', {
+            headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': lastTitle, 'x-career-climber-lastDescription': lastDescription}
           }).then(response => this.setState({result: response.data})) 
           //.then(response => console.log(response)) 
   }
