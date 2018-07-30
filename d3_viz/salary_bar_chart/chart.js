@@ -91,13 +91,13 @@ function updateGraph(data, jobValue, stateValue) {
     dataGrouped = d3.nest()
       .key(function(d) { return d.experiences; })
       .rollup(function(v) { return {
-            min: d3.min(v, function(d) { return d.salary; }),
-            lower: d3.quantile(v.map(function(d) { return d.salary;}).sort(d3.ascending),.25),
-            median: d3.median(v, function(d) { return d.salary; }),
-            mean: d3.mean(v, function(d) { return d.salary; }),
-            upper: d3.quantile(v.map(function(d) { return d.salary;}).sort(d3.ascending),.75),
-            max: d3.max(v, function(d) { return d.salary; }),
-            count: v.length
+            min: d3.min(v, function(d) { return d.min; }),
+            lower: d3.mean(v, function(d) { return d.lower_quantile; }),
+            median: d3.mean(v, function(d) { return d.median; }),
+            mean: d3.mean(v, function(d) { return d.mean; }),
+            upper: d3.mean(v, function(d) { return d.upper_quantile; }),
+            max: d3.max(v, function(d) { return d.max; }),
+            count: d3.sum(v, function(d) { return d.count; }),
       }; })
       .sortKeys(d3.descending)
       .entries(filteredData);
