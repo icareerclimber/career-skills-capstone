@@ -1,0 +1,25 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: icareers-api
+spec:
+  template:
+    metadata:
+      labels:
+        app: icareers-api
+    spec:
+      containers:
+      - name: icareers-api
+        image: gcr.io/stalwart-kite-207008/icareers-api:latest
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+        lifecycle:
+          postStart:
+            exec:
+              command: ["gcsfuse", "-o", "nonempty", "career-capstone", "/mnt/career-capstone"]
+          preStop:
+            exec:
+              command: ["fusermount", "-u", "/mnt/career-capstone"]
