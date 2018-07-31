@@ -1,16 +1,24 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: icareers-api
 spec:
+  selector:
+    matchLabels:
+      app: icareers
+      tier: backend
   template:
     metadata:
       labels:
-        app: icareers-api
+        app: icareers
+        tier: backend
     spec:
       containers:
       - name: icareers-api
         image: gcr.io/stalwart-kite-207008/icareers-api:latest
+        ports:
+          - name: http
+            containerPort: 5000
         securityContext:
           privileged: true
           capabilities:
@@ -23,3 +31,17 @@ spec:
           preStop:
             exec:
               command: ["fusermount", "-u", "/mnt/career-capstone"]
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: icareers-api
+spec:
+  selector:
+    app: icareers
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: http
+  type: LoadBalancer

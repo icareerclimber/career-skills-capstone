@@ -42,8 +42,8 @@ class Title extends React.Component {
   render() {
     return (
       <div className="col-lg-1">
-        <input 
-          type='text' 
+        <input
+          type='text'
           placeholder="Enter Job Title"
           onChange={this.handleTitleChange} />
       </div>
@@ -64,8 +64,8 @@ class School extends React.Component {
   render() {
     return (
       <div className="col-lg-1">
-        <input 
-          type='text' 
+        <input
+          type='text'
           placeholder="Enter School"
           onChange={this.handleSchoolChange} />
       </div>
@@ -86,8 +86,8 @@ class Company extends React.Component {
   render() {
     return (
       <div className="col-lg-1">
-        <input 
-          type='text' 
+        <input
+          type='text'
           placeholder="Enter Company"
           onChange={this.handleCompanyChange} />
       </div>
@@ -196,7 +196,7 @@ class AddEducation extends React.Component {
     super();
     this.handleClick = this.handleClick.bind(this)
   }
-  
+
   handleClick() {
     this.props.handleClick()
   }
@@ -215,7 +215,7 @@ class AddWork extends React.Component {
     super();
     this.handleClick = this.handleClick.bind(this)
   }
-  
+
   handleClick() {
     this.props.handleClick()
   }
@@ -234,7 +234,7 @@ class RemoveLastEducation extends React.Component {
     super();
     this.handleClick = this.handleClick.bind(this)
   }
-  
+
   handleClick() {
     this.props.handleClick()
   }
@@ -253,7 +253,7 @@ class RemoveLastWork extends React.Component {
     super();
     this.handleClick = this.handleClick.bind(this)
   }
-  
+
   handleClick() {
     this.props.handleClick()
   }
@@ -364,7 +364,7 @@ class Summary extends React.Component {
        //<p> {this.props.testMessage} </p>
 }
 
-const MockSummary = { 
+const MockSummary = {
   Education: [
     {
       Degree: "Master",
@@ -547,17 +547,16 @@ class App extends React.Component {
   }
 
   handleSubmit() {
-    //axios.get('http://localhost:8081/MockResponse', {
     const sum = this.state.summary
     const last = sum.Work[sum.Work.length - 1]
     const lastTitle = last.Title
     const lastDescription = last.Description
-    axios.get('http://localhost:8081/postSummary', {
+    axios.get($SCRIPT_ROOT + '/postSummary', {
             headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': lastTitle, 'x-career-climber-lastDescription': lastDescription}
-          }).then(response => this.setState({result: response.data})) 
-          //.then(response => console.log(response)) 
+          }).then(response => this.setState({result: response.data}))
+          //.then(response => console.log(response))
   }
-  
+
   render() {
     return (
       <div className="app">
@@ -575,7 +574,6 @@ class App extends React.Component {
 
 
 ReactDOM.render(
-    <App />, 
+    <App />,
     document.getElementById("root")
 );
-
