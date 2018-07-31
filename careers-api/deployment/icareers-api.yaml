@@ -42,6 +42,19 @@ spec:
     tier: backend
   ports:
   - protocol: TCP
+    port: 5000
+    targetPort: http
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: icareers-api-ext
+spec:
+  selector:
+    app: icareers
+    tier: backend
+  ports:
+  - protocol: TCP
     port: 80
     targetPort: http
   type: LoadBalancer

@@ -37,7 +37,7 @@ def returnMatches():
      description = request.headers.get('x-career-climber-lastDescription')
      data = {"experience":[{"title": title, "description": description}]}
      r = http.request(
-       "POST", "http://icareers-api/model/similar_jobs",
+       "POST", "http://icareers-api:5000/model/similar_jobs",
        body=json.dumps(data),
        headers={'Content-Type': 'application/json'})
      return '<div>' + str(r.data) + '</div>'
