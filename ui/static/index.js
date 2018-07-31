@@ -552,7 +552,7 @@ class App extends React.Component {
     const last = sum.Work[sum.Work.length - 1]
     const lastTitle = last.Title
     const lastDescription = last.Description
-    axios.get('http://localhost:8081/postSummary', {
+    axios.get('/postSummary', {
             headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': lastTitle, 'x-career-climber-lastDescription': lastDescription}
           }).then(response => this.setState({result: response.data})) 
           //.then(response => console.log(response)) 

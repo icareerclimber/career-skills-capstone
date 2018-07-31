@@ -97,11 +97,11 @@ gcloud container clusters create icareers-cluster --num-nodes=1
 ```
 6. Deploy application
 ```
-kubectl run icareers-ui --image=gcr.io/${PROJECT_ID}/icareers-ui --port 5000
+kubectl run icareers-ui --image=gcr.io/${PROJECT_ID}/icareers-ui --port 8081 
 ```
 7. Expose application on internet
 ```
-kubectl expose deployment icareers-ui --type=LoadBalancer --port 80 --target-port 5000
+kubectl expose deployment icareers-ui --type=LoadBalancer --port 80 --target-port 8081
 ```
 8. Wait for service to become available, External-IP field will be populated in output from following call when the service is available
 ```
@@ -123,3 +123,36 @@ gcloud compute forwarding-rules list
 ```
 gcloud container clusters delete icareers-cluster
 ```
+
+### Upgrade
+The following steps will deploy a newly-built container.
+1. Stop the service
+```
+kubectl delete service icareers-ui
+```
+2. Remove deployment
+```
+kubectl delete deployment icareers-ui
+```
+3. Build new image (with a different version)
+```
+docker build -t gcr.io/${PROJECT_ID}/icareers-ui:0.2 .
+```
+4. Upload image
+```
+gcloud docker -- push gcr.io/${PROJECT_ID}/icareers-ui:0.2
+```
+5. Deploy application
+```
+kubectl run icareers-ui --image=gcr.io/${PROJECT_ID}/icareers-ui:0.2 --port 8081
+```
+6. Expose application on internet
+```
+kubectl expose deployment icareers-ui --type=LoadBalancer --port 80 --target-port 8081
+```
+7. Wait for service to become available, External-IP field will be populated in output from following call when the service is available
+```
+kubectl get service
+```
+8. Navigate broswer to service's external IP address.
+
