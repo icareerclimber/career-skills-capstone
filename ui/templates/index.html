@@ -5,6 +5,9 @@
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
       <link rel="stylesheet" href="style.css">
+      <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+      </script>
     </head>
     <body>
         <div class="jumbotron">
@@ -47,7 +50,7 @@
 		</ul>
 	    </div>
 	  </div>
-	  
+
 	  <div class="footer-main">
 	    <div class="container text-center">
 		    Designed and maintained by <a href="mailto:kbrodd@ischool.berkeley.edu">Karin Belsvik Brodd</a>, <a href="mailto:keri.wheatley@ischool.berkeley.edu">Keri Wheatley</a>, and <a href="mailto:yhzhao@berkeley.edu">Yuhang Zhao</a>.

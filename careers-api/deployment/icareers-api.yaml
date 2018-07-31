@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: icareers-api
+spec:
+  selector:
+    matchLabels:
+      app: icareers
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: icareers
+        tier: backend
+    spec:
+      containers:
+      - name: icareers-api
+        image: gcr.io/stalwart-kite-207008/icareers-api:latest
+        ports:
+          - name: http
+            containerPort: 5000
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+        lifecycle:
+          postStart:
+            exec:
+              command: ["gcsfuse", "-o", "nonempty", "career-capstone", "/mnt/career-capstone"]
+          preStop:
+            exec:
+              command: ["fusermount", "-u", "/mnt/career-capstone"]
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: icareers-api
+spec:
+  selector:
+    app: icareers
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: http
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: icareers-api-ext
+spec:
+  selector:
+    app: icareers
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: http
+  type: LoadBalancer
