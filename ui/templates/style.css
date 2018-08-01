@@ -88,10 +88,34 @@ html, body {
     color: black;
 }
 
+#wrap {
+  min-height: 100%;
+}
+
+#main {
+  overflow: auto;
+  padding-bottom: 150px;
+}
+
 .footer {
   background: #061D25;
   padding: 10px 0;
+  position: fixed;
+  margin-top: -150px; /* negative value of footer height */
+  height: 150px;
+  clear:both;
+  padding-top:20px;
 }
+
+.bd-footer {
+  position: fixed;
+  bottom: 0;
+  margin-top: -150px; /* negative value of footer height */
+  height: 150px;
+  clear:both;
+  padding-top:20px;
+}
+
 .footer a {
   color: #70726F;
   font-size: 20px;

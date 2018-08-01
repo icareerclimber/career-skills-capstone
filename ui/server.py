@@ -1,6 +1,7 @@
 from flask import Flask, request, send_from_directory, render_template
 
 import urllib3
+import urllib.parse
 import json
 
 #from flask_cors import CORS
@@ -36,11 +37,57 @@ def returnMatches():
      title = request.headers.get('x-career-climber-lastTitle')
      description = request.headers.get('x-career-climber-lastDescription')
      data = {"experience":[{"title": title, "description": description}]}
-     r = http.request(
-       "POST", "http://icareers-api:5000/model/similar_jobs",
-       body=json.dumps(data),
-       headers={'Content-Type': 'application/json'})
-     return '<div>' + str(r.data) + '</div>'
+     # instrument for local test
+     try:
+       r = http.request(
+         "POST", "http://icareers-api:5000/model/similar_jobs",
+         body=json.dumps(data),
+         headers={'Content-Type': 'application/json'})
+     except:
+       r = http.request(
+         "POST", "http://127.0.0.1:5000/model/similar_jobs",
+         body=json.dumps(data),
+         headers={'Content-Type': 'application/json'})
+
+     rJson = json.loads(r.data.decode('utf-8'))
+     result = ''
+     c = 0
+     for i in rJson['results']:
+         if result == '':
+           result = '<ul><li>title: ' + i['title'] + ", probability: " + str(i['probability']) + '</li>'
+         else:
+           result = result + '<li>title: ' + i['title'] + ", probability: " + str(i['probability']) + '</li>'
+         c = c + 1
+         if c > 10:
+           break
+     result = result + '</ul>'
+
+     return result 
+
+@app.route('/getSkillSet')
+def returnSkillSet():
+     http = urllib3.PoolManager()
+     title = request.headers.get('x-career-climber-lastTitle')
+     try:
+       r = http.request(
+         "GET", "http://icareers-api:5000/model/skills/" + urllib.parse.quote(title))
+     except:
+       r = http.request(
+         "GET", "http://127.0.0.1:5000/model/skills/" + urllib.parse.quote(title))
+     rJson = json.loads(r.data.decode('utf-8'))
+     result = ''
+     c = 0
+     for i in rJson['results']:
+         if result == '':
+           result = '<ul><li>' + i + '</li>'
+         else:
+           result = result + '<li>' + i + '</li>'
+         c = c + 1
+         if c > 10:
+           break
+     result = result + '</ul>'
+           
+     return result 
 
 if __name__ == "__main__":
     app.run()
