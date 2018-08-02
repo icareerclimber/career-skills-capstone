@@ -54,9 +54,23 @@ def returnMatches():
      c = 0
      for i in rJson['results']:
          if result == '':
-           result = '<ul><li>title: ' + i['title'] + ", probability: " + str(i['probability']) + '</li>'
+           #result = '<ul><li k=' + urllib.parse.quote(i['title']) + '>title: ' + i['title'] + ', probability: ' + str(i['probability']) + '</li>'
+           result = '<ul><li k=' + \
+                urllib.parse.quote(i['title']) + \
+                '>title: ' + \
+                '<a href="#startSkillSet" onClick=getSkillSet(\'' + urllib.parse.quote(i['title']) + '\'); return false>'  + \
+                i['title'] + \
+                '</a>' + \
+                ', probability: ' + str(i['probability']) + '</li>'
          else:
-           result = result + '<li>title: ' + i['title'] + ", probability: " + str(i['probability']) + '</li>'
+           result = result + '<li k=' + \
+                urllib.parse.quote(i['title']) + \
+                '>title: ' + \
+                '<a href="#startSkillSet" onClick=getSkillSet(\'' + urllib.parse.quote(i['title']) + '\'); return false;>'  + \
+                i['title'] + \
+                '</a>' + \
+                ', probability: ' + str(i['probability']) + '</li>'
+
          c = c + 1
          if c > 10:
            break
@@ -70,18 +84,18 @@ def returnSkillSet():
      title = request.headers.get('x-career-climber-lastTitle')
      try:
        r = http.request(
-         "GET", "http://icareers-api:5000/model/skills/" + urllib.parse.quote(title))
+         "GET", "http://icareers-api:5000/model/skills/" + title)
      except:
        r = http.request(
-         "GET", "http://127.0.0.1:5000/model/skills/" + urllib.parse.quote(title))
+         "GET", "http://127.0.0.1:5000/model/skills/" + title)
      rJson = json.loads(r.data.decode('utf-8'))
      result = ''
      c = 0
      for i in rJson['results']:
          if result == '':
-           result = '<ul><li>' + i + '</li>'
+           result = '<h3>Skill Set for ' + urllib.parse.unquote(i) +'</h3><ul><li k=' + i + '>' + i + '</li>'
          else:
-           result = result + '<li>' + i + '</li>'
+           result = result + '<li k=' + i + '>' + i + '</li>'
          c = c + 1
          if c > 10:
            break
