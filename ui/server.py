@@ -35,7 +35,7 @@ def returnMatches():
      #data = {"experience":[{"title": "software engineeer", "description": "i build data models"}]}
      print(request.headers)
      title = request.headers.get('x-career-climber-lastTitle')
-     description = request.headers.get('x-career-climber-lastDescription')
+     description = urllib.parse.unquote(request.headers.get('x-career-climber-lastDescription'))
      data = {"experience":[{"title": title, "description": description}]}
      #data = {"experience":[{"title": "manager", "description": "manage a lot of people"}]}
      # instrument for local test

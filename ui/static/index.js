@@ -590,10 +590,11 @@ class App extends React.Component {
     //const sum = this.state.summary
     //const last = sum.Work[sum.Work.length - 1]
     //const lastTitle = last.Title
+    document.getElementById('d3').style.display='none'
     const lastTitle = ""
     const lastDescription = this.state.currentWorkDescription 
     axios.get($SCRIPT_ROOT + '/postSummary', {
-            headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': lastTitle, 'x-career-climber-lastDescription': lastDescription}
+            headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': lastTitle, 'x-career-climber-lastDescription': escape(lastDescription)}
           }).then(response => this.setState({resultSimilarJobs: response.data}))
   }
 
