@@ -1,4 +1,5 @@
-//Borrowed from https://bl.ocks.org/alandunning/7008d0332cc28a826b37b3cf6e7bd998
+//Extension of Alan Dunning’s work from https://bl.ocks.org/alandunning/7008d0332cc28a826b37b3cf6e7bd998
+//Original work uses MIT license
 
 // Load unique job titles json data
 d3.json("05_unique_jobs.json", function(error, json) {
