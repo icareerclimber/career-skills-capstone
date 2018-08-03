@@ -1,4 +1,10 @@
+var jobValue = ''
+
 function getSkillSet(t) {
+    document.getElementById('d3').style.display='block'
+    jobValue = unescape(t)
+    document.getElementById('exploreSalary').innerHTML="<h3>Exlore salary of job <font color='blue'>" + jobValue + "</font> by state:</h3>"
+    updateGraph(salaryData, jobValue, 'All')
     axios.get($SCRIPT_ROOT + '/getSkillSet', {
             headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': t}
           }).then(response => document.getElementById('skillSet').innerHTML=response.data)
@@ -584,22 +590,11 @@ class App extends React.Component {
     //const sum = this.state.summary
     //const last = sum.Work[sum.Work.length - 1]
     //const lastTitle = last.Title
-    const lastTitle = "engineer"
+    const lastTitle = ""
     const lastDescription = this.state.currentWorkDescription 
     axios.get($SCRIPT_ROOT + '/postSummary', {
             headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': lastTitle, 'x-career-climber-lastDescription': lastDescription}
           }).then(response => this.setState({resultSimilarJobs: response.data}))
-          //.then(response => console.log(response))
-    //axios.get($SCRIPT_ROOT + '/getSkillSet', {
-    //        headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': lastTitle}
-    //      }).then(response => this.setState({resultSkillSet: response.data}))
-
-    //this.state.resultSimilarJobs.map(m => {
-    //  axios.get($SCRIPT_ROOT + '/getSkillSet', {
-    //        headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': m.title}
-    //  }).then(response => this.setState({resultSkillSet: response.data}))
-
-          //})
   }
 
   getSkillSet(t) {

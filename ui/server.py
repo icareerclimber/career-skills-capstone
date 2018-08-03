@@ -37,6 +37,7 @@ def returnMatches():
      title = request.headers.get('x-career-climber-lastTitle')
      description = request.headers.get('x-career-climber-lastDescription')
      data = {"experience":[{"title": title, "description": description}]}
+     #data = {"experience":[{"title": "manager", "description": "manage a lot of people"}]}
      # instrument for local test
      try:
        r = http.request(
@@ -50,6 +51,8 @@ def returnMatches():
          headers={'Content-Type': 'application/json'})
 
      rJson = json.loads(r.data.decode('utf-8'))
+     for i in rJson['results']:
+        print(i)
      result = ''
      c = 0
      for i in rJson['results']:
@@ -93,7 +96,7 @@ def returnSkillSet():
      c = 0
      for i in rJson['results']:
          if result == '':
-           result = '<h3>Skill Set for ' + urllib.parse.unquote(i) +'</h3><ul><li k=' + i + '>' + i + '</li>'
+           result = '<h3>Skill Set for <font color="blue">' + urllib.parse.unquote(title) +'</font></h3><ul><li k=' + i + '>' + i + '</li>'
          else:
            result = result + '<li k=' + i + '>' + i + '</li>'
          c = c + 1
