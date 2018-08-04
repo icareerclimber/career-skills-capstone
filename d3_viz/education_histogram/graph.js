@@ -4,13 +4,28 @@
 var allData = []
 var rankedSubjects = []
 d3.json("04_edu_data_bar_chart.json", function(error, json) {
-    d3.csv("04_ranked_subjects.csv", function(error, data) {
-        if (error) throw error;
-        allData = json
-        rankedSubjects = data
+    if (error) throw error;
+    json.forEach(function(d) {
+      var t = 0
+      var bars = []
+      Object.keys(d).forEach(function(key, index) {
+        if (key != 'cleaned_job_title' && key != 'final_degree_category') {
+          bars.push({name: key, value: d[key], y0: t, y1: t + d[key], final_degree_category: d.final_degree_category})
+          t += d[key]
+        }
+      });
+      d.total = t
+      allData.push({cleaned_job_title: d.cleaned_job_title, final_degree_category: d.final_degree_category, total: t, bars: bars})
+    });
 
-        updateGraph(allData, 'account executive')
-})});
+});
+
+d3.csv("04_ranked_subjects.csv", function(error, data) {
+    if (error) throw error;
+    rankedSubjects = data
+
+    updateGraph(allData, 'account executive')
+})
 
 // Load unique job titles json data
 d3.csv("04_unique_jobs.csv", function(error, data) {
@@ -42,11 +57,6 @@ function updateGraph(data, jobValue) {
     var group = rankedSubjects.filter(function(d) {
         return (d.cleaned_job_title == jobValue) }).map( function(d) {return d.subject_name });
 
-    var layers = d3.stack()
-        .keys(group)
-        .offset(d3.stackOffsetDiverging)
-        (filteredData);
-
     var svg = d3.select("svg"),
         margin = {
             top: 25,
@@ -60,7 +70,7 @@ function updateGraph(data, jobValue) {
     var x = d3.scaleLinear()
         .rangeRound([margin.left, width - margin.right]);
 
-    x.domain([d3.min(layers, stackMin), d3.max(layers, stackMax)]);
+    x.domain([d3.min(filteredData, stackMin), d3.max(filteredData, stackMax)]);
 
     var y = d3.scaleBand()
         .rangeRound([height - margin.bottom, margin.top])
@@ -71,27 +81,26 @@ function updateGraph(data, jobValue) {
     }))
 
     function stackMin(layers) {
-        return d3.min(layers, function(d) {
-            return d[0];
+        return d3.min(layers.bars, function(d) {
+            return d.y0;
         });
     }
 
-    function stackMax(layers) {
-        return d3.max(layers, function(d) {
-            return d[1];
-        });
+    function stackMax(d) {
+        return d.total;
     }
 
     var z = d3.scaleOrdinal(d3.schemeCategory10);
+    z.domain(group)
 
     var maing = svg.append("g")
         .selectAll("g")
-        .data(layers);
+        .data(filteredData);
 
     var g = maing.enter().append("g")
-        .attr("fill", function(d) {
-            return z(d.key);
-        });
+        // .attr("fill", function(d) {
+        //     return z(d.key);
+        // });
 
     svg.selectAll("rect").remove();
     svg.selectAll(".axis").remove();
@@ -99,46 +108,34 @@ function updateGraph(data, jobValue) {
     svg.selectAll(".y").remove();
 
     var tooltip = d3.select("body").append("div").attr("class", "toolTip");
-    
-    g.selectAll(".bar")
+
+    g.selectAll("rect")
         .data(function(d) {
-            d.forEach(function(d1) {
-                d1.key = d.key;
-                return d1;
-            });
-            return d;
+            return d.bars;
         })
         .enter()
         .append("rect")
         .attr("class", "bar")
-        .attr("data", function(d) {
-            var data = {};
-            data["key"] = d.key;
-            data["value"] = d.data[d.key];
-            var total = 0;
-            group.map(function(d1) {
-                total = total + d.data[d1]
-            });
-            data["total"] = total;
-            return JSON.stringify(data);
-        })
         .attr("width", function(d) {
-            return x(d[1]) - x(d[0]);
+            return x(d.y1) - x(d.y0);
         })
         .attr("x", function(d) {
-            return x(d[0]);
+            return x(d.y0);
         })
         .attr("y", function(d) {
-            return y(d.data.final_degree_category);
+            return y(d.final_degree_category);
         })
         .attr("height", y.bandwidth)
+        .style("fill", function(d) {
+          return z(d.name)
+        })
         .on("mousemove", function(d){
             tooltip
               .style("left", d3.event.pageX + "px")
               .style("top", d3.event.pageY + "px")
               .style("display", "inline-block")
-              .html('"' + (d.key) + '"' +
-                    "</span><br><span>Total: " + (d[1]-d[0]));
+              .html('"' + (d.name) + '"' +
+                    "</span><br><span>Total: " + (d.value));
         })
         .on("mouseout", function(d){ tooltip.style("display", "none");});
 
