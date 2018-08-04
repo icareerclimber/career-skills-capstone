@@ -2,6 +2,7 @@ var jobValue = ''
 
 function getSkillSet(t) {
     document.getElementById('d3').style.display='block'
+    document.getElementById('skillSet').style.display='block'
     jobValue = unescape(t)
     document.getElementById('exploreSalary').innerHTML="<h3>Exlore salary of job <font color='blue'>" + jobValue + "</font> by state:</h3>"
     updateGraph(salaryData, jobValue, 'All')
@@ -591,6 +592,7 @@ class App extends React.Component {
     //const last = sum.Work[sum.Work.length - 1]
     //const lastTitle = last.Title
     document.getElementById('d3').style.display='none'
+    document.getElementById('skillSet').style.display='none'
     const lastTitle = ""
     const lastDescription = this.state.currentWorkDescription 
     axios.get($SCRIPT_ROOT + '/postSummary', {
@@ -616,9 +618,9 @@ class App extends React.Component {
         </div>
         <div className="col">
           <h1>Result</h1>
+          <a id="startSkillSet"/>
           <h3>Similar Jobs (click on job title to explore more)</h3>
           <div dangerouslySetInnerHTML={{__html: this.state.resultSimilarJobs}} />
-          <a id="startSkillSet"/>
           <div id='skillSet'></div>
         </div>
       </div>

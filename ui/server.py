@@ -58,21 +58,21 @@ def returnMatches():
      for i in rJson['results']:
          if result == '':
            #result = '<ul><li k=' + urllib.parse.quote(i['title']) + '>title: ' + i['title'] + ', probability: ' + str(i['probability']) + '</li>'
-           result = '<ul><li k=' + \
+           result = '<ul id="similarJobs"><li k=' + \
                 urllib.parse.quote(i['title']) + \
-                '>title: ' + \
-                '<a href="#startSkillSet" onClick=getSkillSet(\'' + urllib.parse.quote(i['title']) + '\'); return false>'  + \
+                '>' + \
+                '<a class="similarJob" href="#startSkillSet" onClick=getSkillSet(\'' + urllib.parse.quote(i['title']) + '\'); return false>'  + \
                 i['title'] + \
                 '</a>' + \
-                ', probability: ' + str(i['probability']) + '</li>'
+                '{:.1%}'.format(i['probability']) + ' similar, </li>'
          else:
            result = result + '<li k=' + \
                 urllib.parse.quote(i['title']) + \
-                '>title: ' + \
-                '<a href="#startSkillSet" onClick=getSkillSet(\'' + urllib.parse.quote(i['title']) + '\'); return false;>'  + \
+                '>' + \
+                '<a class="similarJob" href="#startSkillSet" onClick=getSkillSet(\'' + urllib.parse.quote(i['title']) + '\'); return false;>'  + \
                 i['title'] + \
                 '</a>' + \
-                ', probability: ' + str(i['probability']) + '</li>'
+                '{:.1%}'.format(i['probability']) + ' similar, </li>'
 
          c = c + 1
          if c > 10:
