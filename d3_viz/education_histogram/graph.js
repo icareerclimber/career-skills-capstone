@@ -63,7 +63,7 @@ function updateGraph(data, jobValue) {
             top: 25,
             right: 100,
             bottom: 100,
-            left: 175
+            left: 180
         },
         width = +svg.attr("width"),
         height = +svg.attr("height");
@@ -135,22 +135,37 @@ function updateGraph(data, jobValue) {
               .style("left", d3.event.pageX + "px")
               .style("top", d3.event.pageY + "px")
               .style("display", "inline-block")
-              .html('"' + (d.name) + '"' +
-                    "</span><br><span>Total: " + (d.value));
+              .html('Degree Subject: "' + (d.name) + '"' +
+                    "</span><br><span>Total Records: " + (d.value));
         })
         .on("mouseout", function(d){ tooltip.style("display", "none");});
 
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + (height - margin.bottom) + ")")
-        .call(d3.axisBottom(x))
+        .call(d3.axisBottom(x));
+
+    // text label for the x axis
+    svg.append("g")
         .append("text")
-        .attr("x", width / 2)
-        .attr("y", margin.bottom * 0.5)
-        .text("Records");
+        .attr("class","labels")
+        .attr("transform",
+            "translate(" + ((width)/2 - 20) + " ," + (height - margin.bottom + 50) + ")")
+        .style("text-anchor", "center")
+        .text("Total Records");
 
     svg.append("g")
         .attr("class", "y axis")
         .attr("transform", "translate(" + margin.left + ",0)")
         .call(d3.axisLeft(y));
+
+    // text label for the y axis
+    svg.append("text")
+        .attr("class","labels")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0)
+        .attr("x", -(height-margin.bottom)/2)
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Degree Type");
 }

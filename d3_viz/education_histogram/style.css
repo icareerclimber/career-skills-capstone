@@ -47,3 +47,7 @@ text {
 .y line {
   /*display: none;*/
 }
+.labels {
+  font-size: 20px;
+  font-weight: 400;
+}
