@@ -49,7 +49,7 @@ var stateDrop = d3.select("#stateDropdown")
     .on('change',onChange);
 
 // Set the margins
-var margin = {top: 100, right: 100, bottom: 100, left: 100},
+var margin = {top: 100, right: 100, bottom: 100, left: 120},
   width = 850 - margin.left - margin.right,
   height = 600 - margin.top - margin.bottom;
 
@@ -127,10 +127,29 @@ function updateGraph(data, jobValue, stateValue) {
         .call(d3.axisBottom(x).ticks(10).tickFormat(function(d) 
             { return formatMoney(d); }).tickSizeInner([-height]));
 
+    // text label for the x axis
+    svg.append("g")
+        .append("text")
+        .attr("class","labels")
+        .attr("transform",
+            "translate(" + ((width+margin.left)/2+10) + " ," + (height+margin.bottom+50) + ")")
+        .style("text-anchor", "center")
+        .text("Annual Salary");
+
     // Create y-axis ticks and lines
     var yLines = g.append("g")
         .attr("class", "y axis")
         .call(d3.axisLeft(y));
+
+    // text label for the y axis
+    svg.append("text")
+        .attr("class","labels")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0)
+        .attr("x", -(height-margin.bottom))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Experience Qualifier");
 
     g.selectAll(".bar").remove()
 
@@ -149,13 +168,13 @@ function updateGraph(data, jobValue, stateValue) {
               .style("left", d3.event.pageX + "px")
               .style("top", d3.event.pageY + "px")
               .style("display", "inline-block")
-              .html("Experience: " + (d.key) + "<br><span>Min: " + 
+              .html("Experience Qualifier: " + (d.key) + "<br><span>Min: " + 
                     formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " + 
                     formatMoney(d.value.lower) + "</span><br><span> Median: " + 
                     formatMoney(d.value.median) + "</span><br><span> Mean: " + 
                     formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " + 
                     formatMoney(d.value.upper) + "</span><br><span> Max: " + 
-                    formatMoney(d.value.max) + "</span><br><span> Count: " + 
+                    formatMoney(d.value.max) + "</span><br><span> Total Records: " + 
                     (d.value.count)
                     );
         })
