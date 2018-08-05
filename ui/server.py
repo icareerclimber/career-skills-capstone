@@ -1,6 +1,7 @@
 from flask import Flask, request, send_from_directory, render_template
 
 import urllib3
+import urllib.parse
 import json
 
 #from flask_cors import CORS
@@ -34,13 +35,76 @@ def returnMatches():
      #data = {"experience":[{"title": "software engineeer", "description": "i build data models"}]}
      print(request.headers)
      title = request.headers.get('x-career-climber-lastTitle')
-     description = request.headers.get('x-career-climber-lastDescription')
+     description = urllib.parse.unquote(request.headers.get('x-career-climber-lastDescription'))
      data = {"experience":[{"title": title, "description": description}]}
-     r = http.request(
-       "POST", "http://icareers-api:5000/model/similar_jobs",
-       body=json.dumps(data),
-       headers={'Content-Type': 'application/json'})
-     return '<div>' + str(r.data) + '</div>'
+     #data = {"experience":[{"title": "manager", "description": "manage a lot of people"}]}
+     # instrument for local test
+     try:
+       r = http.request(
+         "POST", "http://icareers-api:5000/model/similar_jobs",
+         body=json.dumps(data),
+         headers={'Content-Type': 'application/json'})
+     except:
+       r = http.request(
+         "POST", "http://127.0.0.1:5000/model/similar_jobs",
+         body=json.dumps(data),
+         headers={'Content-Type': 'application/json'})
+
+     rJson = json.loads(r.data.decode('utf-8'))
+     for i in rJson['results']:
+        print(i)
+     result = ''
+     c = 0
+     for i in rJson['results']:
+         if result == '':
+           #result = '<ul><li k=' + urllib.parse.quote(i['title']) + '>title: ' + i['title'] + ', probability: ' + str(i['probability']) + '</li>'
+           result = '<ul id="similarJobs"><li k=' + \
+                urllib.parse.quote(i['title']) + \
+                '>' + \
+                '<a class="similarJob" href="#startSkillSet" onClick=getSkillSet(\'' + urllib.parse.quote(i['title']) + '\'); return false>'  + \
+                i['title'] + \
+                '</a>' + \
+                '{:.1%}'.format(i['probability']) + ' similar, </li>'
+         else:
+           result = result + '<li k=' + \
+                urllib.parse.quote(i['title']) + \
+                '>' + \
+                '<a class="similarJob" href="#startSkillSet" onClick=getSkillSet(\'' + urllib.parse.quote(i['title']) + '\'); return false;>'  + \
+                i['title'] + \
+                '</a>' + \
+                '{:.1%}'.format(i['probability']) + ' similar, </li>'
+
+         c = c + 1
+         if c > 10:
+           break
+     result = result + '</ul>'
+
+     return result 
+
+@app.route('/getSkillSet')
+def returnSkillSet():
+     http = urllib3.PoolManager()
+     title = request.headers.get('x-career-climber-lastTitle')
+     try:
+       r = http.request(
+         "GET", "http://icareers-api:5000/model/skills/" + title)
+     except:
+       r = http.request(
+         "GET", "http://127.0.0.1:5000/model/skills/" + title)
+     rJson = json.loads(r.data.decode('utf-8'))
+     result = ''
+     c = 0
+     for i in rJson['results']:
+         if result == '':
+           result = '<h3>Skill Set for <font color="blue">' + urllib.parse.unquote(title) +'</font></h3><ul><li k=' + i + '>' + i + '</li>'
+         else:
+           result = result + '<li k=' + i + '>' + i + '</li>'
+         c = c + 1
+         if c > 10:
+           break
+     result = result + '</ul>'
+           
+     return result 
 
 if __name__ == "__main__":
     app.run()

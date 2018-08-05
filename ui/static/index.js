@@ -1,3 +1,16 @@
+var jobValue = ''
+
+function getSkillSet(t) {
+    document.getElementById('d3').style.display='block'
+    document.getElementById('skillSet').style.display='block'
+    jobValue = unescape(t)
+    document.getElementById('exploreSalary').innerHTML="<h3>Exlore salary of job <font color='blue'>" + jobValue + "</font> by state:</h3>"
+    updateGraph(salaryData, jobValue, 'All')
+    axios.get($SCRIPT_ROOT + '/getSkillSet', {
+            headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': t}
+          }).then(response => document.getElementById('skillSet').innerHTML=response.data)
+}
+ 
 class SelectDegree extends React.Component {
   constructor(props) {
     super();
@@ -19,7 +32,6 @@ class SelectDegree extends React.Component {
           <option defaultValue="Select Degree" disabled>Select Degree</option>
           <option value="Associates">Associates</option>
           <option value="Bechelor">Bachelor</option>
-          <option value="College">College</option>
           <option value="Master">Master</option>
           <option value="Ph.D.">Ph.D.</option>
           <option value="PostDoc">PostDoc</option>
@@ -184,8 +196,7 @@ class WorkDescription extends React.Component {
   render() {
     return (
       <div className="col-lg-1">
-        <h4 htmlFor="job description">Job Description:</h4>
-        <textarea float="none" rows='5' cols='100' onChange={this.handleWorkDescriptionChange}/>
+        <textarea float="none" rows='5' cols='120' onChange={this.handleWorkDescriptionChange}/>
       </div>
     )
   }
@@ -248,6 +259,25 @@ class RemoveLastEducation extends React.Component {
   }
 }
 
+class Startover extends React.Component {
+  constructor() {
+    super();
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  handleClick() {
+    this.props.handleClick()
+  }
+
+  render() {
+    return (
+      <div>
+        <button type="button" className="btn btn-warning" onClick={this.handleClick}>Start from scratch</button>
+      </div>
+    )
+  }
+}
+
 class RemoveLastWork extends React.Component {
   constructor() {
     super();
@@ -274,34 +304,30 @@ const EducationStyle = {
 class Education extends React.Component {
   render() {
     return (
+      <div className="col">
       <div className="row" style={EducationStyle}>
         <SelectDegree appHandleDegreeChange={this.props.appHandleDegreeChange} />
         <School appHandleSchoolChange={this.props.appHandleSchoolChange}/>
         <From appHandleFromChange={this.props.appHandleFromChange}/>
         <To appHandleToChange={this.props.appHandleToChange}/>
+      </div>
+      <div>
         <AddEducation handleClick={this.props.appHandleAddEducation}/>
-        <RemoveLastEducation handleClick={this.props.appHandleRemoveLastEducation}/>
+        <Startover handleClick={this.props.appHandleStartoverEducation}/>
+      </div>
       </div>
     )
   }
 }
 
 const WorkStyle = {
-  display: 'flex'
+  display: 'block'
 }
 
 class Work extends React.Component {
   render() {
     return (
       <div className="col">
-      <div className="row" style={WorkStyle}>
-        <Title appHandleTitleChange={this.props.appHandleTitleChange} />
-        <Company appHandleCompanyChange={this.props.appHandleCompanyChange}/>
-        <WorkFrom appHandleWorkFromChange={this.props.appHandleWorkFromChange}/>
-        <WorkTo appHandleWorkToChange={this.props.appHandleWorkToChange}/>
-        <AddWork handleClick={this.props.appHandleAddWork}/>
-        <RemoveLastWork handleClick={this.props.appHandleRemoveLastWork}/>
-      </div>
       <div className="row" style={WorkStyle}>
         <WorkDescription appHandleWorkDescriptionChange={this.props.appHandleWorkDescriptionChange}/>
       </div>
@@ -315,41 +341,25 @@ class Summary extends React.Component {
     return (
       <div>
       <h1> Summary of Current Input </h1>
+      <h3>Education</h3>
       <ul className="EducationSummary">
         {this.props.summary.Education.map(m => {
             return (
               <li k={m.id}>
                 <div>
-                  {m.Degree}
-                </div>
-                <div>
-                  {m.School}
-                </div>
-                <div>
-                  {m.From}
-                </div>
-                <div>
-                  {m.To}
+                  {m.From} - {m.To}, {m.Degree} Degree, {m.School}
                 </div>
               </li>
             )
           })}
        </ul>
+      <h3>Work Experience</h3> 
       <ul className="WorkSummary">
         {this.props.summary.Work.map(m => {
             return (
               <li k={m.id}>
                 <div>
-                  {m.Title}
-                </div>
-                <div>
-                  {m.Company}
-                </div>
-                <div>
-                  {m.From}
-                </div>
-                <div>
-                  {m.To}
+                  {m.From} - {m.To}, {m.Title}, {m.Company}
                 </div>
                 <div>
                   {m.Description}
@@ -396,7 +406,6 @@ class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      //summary: MockSummary,
       summary: EmptySummary,
       currentSelectedDegree: "",
       currentSchool:"",
@@ -407,22 +416,24 @@ class App extends React.Component {
       currentWorkFrom: "",
       currentWorkTo: "",
       currentWorkDescription: "",
-      result:"no response yet"
+      resultSimilarJobs:"no response yet",
+      resultSkillSet:"no response yet"
     }
     this.handleDegreeChange=this.handleDegreeChange.bind(this)
     this.handleSchoolChange=this.handleSchoolChange.bind(this)
     this.handleFromChange=this.handleFromChange.bind(this)
     this.handleToChange=this.handleToChange.bind(this)
     this.handleAddEducation=this.handleAddEducation.bind(this)
-    this.handleRemoveLastEducation=this.handleRemoveLastEducation.bind(this)
+    this.handleStartoverEducation=this.handleStartoverEducation.bind(this)
     this.handleTitleChange=this.handleTitleChange.bind(this)
     this.handleCompanyChange=this.handleCompanyChange.bind(this)
     this.handleWorkFromChange=this.handleWorkFromChange.bind(this)
     this.handleWorkToChange=this.handleWorkToChange.bind(this)
     this.handleWorkDescriptionChange=this.handleWorkDescriptionChange.bind(this)
     this.handleAddWork=this.handleAddWork.bind(this)
-    this.handleRemoveLastWork=this.handleRemoveLastWork.bind(this)
+    this.handleStartoverWork=this.handleStartoverWork.bind(this)
     this.handleSubmit=this.handleSubmit.bind(this)
+    this.getSkillSet=this.getSkillSet.bind(this)
   }
 
   handleDegreeChange(m) {
@@ -531,7 +542,31 @@ class App extends React.Component {
     sum.Education.splice(-1,1)
     this.setState({summary: sum })
   }
-
+  
+  handleStartoverEducation() {
+    const sum = this.state.summary
+    sum.Education = []
+    this.setState({
+      summary: sum, 
+      currentSelectedDegree: "",
+      currentSchool: "",
+      currentFrom: "",
+      currentTo: ""
+    })
+  }
+    
+  handleStartoverWork() {
+    const sum = this.state.summary
+    sum.Work = []
+    this.setState({
+      currentTitle: "",
+      currentCompany: "",
+      currentWorkFrom: "",
+      currentWorkTo: "",
+      currentWorkDescription: ""
+    })
+  }
+    
   handleRemoveLastWork() {
     const sum = this.state.summary
     const last = sum.Work[sum.Work.length - 1]
@@ -546,27 +581,48 @@ class App extends React.Component {
     this.setState({summary: sum })
   }
 
-  handleSubmit() {
-    const sum = this.state.summary
-    const last = sum.Work[sum.Work.length - 1]
-    const lastTitle = last.Title
-    const lastDescription = last.Description
-    axios.get($SCRIPT_ROOT + '/postSummary', {
-            headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': lastTitle, 'x-career-climber-lastDescription': lastDescription}
-          }).then(response => this.setState({result: response.data}))
-          //.then(response => console.log(response))
+  htmlToElements(html) {
+    var template = document.createElement('template');
+    template.innerHTML = html;
+    return template.content.childNodes;
   }
+
+  handleSubmit() {
+    //const sum = this.state.summary
+    //const last = sum.Work[sum.Work.length - 1]
+    //const lastTitle = last.Title
+    document.getElementById('d3').style.display='none'
+    document.getElementById('skillSet').style.display='none'
+    const lastTitle = ""
+    const lastDescription = this.state.currentWorkDescription 
+    axios.get($SCRIPT_ROOT + '/postSummary', {
+            headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': lastTitle, 'x-career-climber-lastDescription': escape(lastDescription)}
+          }).then(response => this.setState({resultSimilarJobs: response.data}))
+  }
+
+  getSkillSet(t) {
+    axios.get($SCRIPT_ROOT + '/getSkillSet', {
+            headers: { 'crossOrigin': true, 'x-career-climber-lastTitle': t}
+          }).then(response => this.setState({resultSkillSet: response.data}))
+  } 
 
   render() {
     return (
       <div className="app">
-        <Summary summary={this.state.summary} testMessage={this.state.currentSelectedDegree +" " + this.state.currentSchool + " " + this.state.currentFrom + " " + this.state.currentTo + this.state.currentDescription}/>
-        <h1>Education</h1>
-        <Education title="Education" appHandleDegreeChange={this.handleDegreeChange} appHandleSchoolChange={this.handleSchoolChange} appHandleFromChange={this.handleFromChange} appHandleToChange={this.handleToChange} appHandleAddEducation={this.handleAddEducation} appHandleRemoveLastEducation={this.handleRemoveLastEducation} currentSummary = {this.state.summary.Education}/>
-        <h1>Work</h1>
-        <Work title="Work" appHandleTitleChange={this.handleTitleChange} appHandleCompanyChange={this.handleCompanyChange} appHandleWorkFromChange={this.handleWorkFromChange} appHandleWorkToChange={this.handleWorkToChange} appHandleWorkDescriptionChange={this.handleWorkDescriptionChange} appHandleAddWork={this.handleAddWork} appHandleRemoveLastWork={this.handleRemoveLastWork} currentSummary = {this.state.summary.Work}/>
-        <button type="button" className="btn btn-primary" onClick={this.handleSubmit}> Submit Resume </button>
-        <p>{this.state.result}</p>
+        <div className="NoStyleinputBox">
+          <h3>Please enter your latest work experience in the following text box:</h3>
+          <h3>(then click on the blue button)</h3>
+          <Work title="Work" appHandleTitleChange={this.handleTitleChange} appHandleCompanyChange={this.handleCompanyChange} appHandleWorkFromChange={this.handleWorkFromChange} appHandleWorkToChange={this.handleWorkToChange} appHandleWorkDescriptionChange={this.handleWorkDescriptionChange} appHandleAddWork={this.handleAddWork} appHandleStartoverWork={this.handleStartoverWork} currentSummary = {this.state.summary.Work}/>
+          <br/>
+          <button type="button" className="btn btn-primary" onClick={this.handleSubmit}>Find the potential next moves for your career</button>
+        </div>
+        <div className="col">
+          <h1>Result</h1>
+          <a id="startSkillSet"/>
+          <h3>Similar Jobs (click on job title to explore more)</h3>
+          <div dangerouslySetInnerHTML={{__html: this.state.resultSimilarJobs}} />
+          <div id='skillSet'></div>
+        </div>
       </div>
     )
   }
