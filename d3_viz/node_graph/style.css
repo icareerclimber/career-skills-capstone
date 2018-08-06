@@ -2,9 +2,11 @@
   cursor: pointer;
 }
 
-/*.overlay{*/
-    /*background-color:#EEE;*/
-/*}*/
+body {
+  margin: 15px;
+  background-color: #F1F3F3;
+  font-family: 'Fira Sans', sans-serif;
+}
  
 .node circle {
   fill: #fff;
