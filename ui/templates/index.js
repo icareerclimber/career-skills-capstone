@@ -303,11 +303,10 @@ class App extends React.Component {
   }
 
   handleSubmit() {
-    console.log("BOOM")
     axios.get('http://localhost:5000/MockResponse', {
             headers: { 'crossOrigin': true },
           }).then(response => this.setState({result: response.data})) 
-          .then(response => console.log(response)) 
+          //.then(response => console.log(response)) 
   }
   
   render() {
