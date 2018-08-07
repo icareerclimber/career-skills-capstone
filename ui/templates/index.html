@@ -5,6 +5,8 @@
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
       <link rel="stylesheet" href="style.css">
+      <link rel="stylesheet" href="dndTree.css">
+      <link rel="stylesheet" href="edu.css">
       <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
       </script>
@@ -31,10 +33,28 @@
             </div>
             <div class="col">
              <div id="d3">
-               <div id='exploreSalary'>abc</div>
-               <div id="stateDropdown"></div>
-               <div id="fixTooltip"></div>
-               <div id="graph"></div>
+               <ul class="nav nav-tabs">
+                 <li class="active"><a data-toggle="tab" href="#careerPathTree">CareerPathTree</a></li>
+                 <li><a data-toggle="tab" href="#education">Education</a></li>
+                 <li><a data-toggle="tab" href="#salary">Salary</a></li>
+               </ul>
+               <div class="tab-content">
+                 <div id="salary" class="tab-pane fade">
+                   <div id='exploreSalary'></div>
+                   <div id="stateDropdown"></div>
+                   <div id="fixTooltip"></div>
+                   <div id="graph"></div>
+                 </div>
+                 <div id="education" class="tab-pane fade">
+                   <div id='exploreEducation'></div>
+                   <div id="stateDropdownEdu"></div>
+                   <div id="edugraph"></div>
+                 </div>
+                 <div id="careerPathTree" class="tab-pane fade in active">
+                   <div id='exploreCareerPath'></div>
+                   <div id="tree-container"></div>
+                 </div>
+               </div>
              </div>
             </div>
          </div>
@@ -78,8 +98,19 @@
        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
        <script src="https://d3js.org/d3.v4.min.js"></script>
-       <script src="chart.js"></script>
+       <script>
+         d3v4 = d3
+         window.d3 = null
+       </script>
+       <script src="https://d3js.org/d3.v3.min.js"></script>
+       <script>
+         d3v3 = d3
+         window.d3 = null
+       </script>
        <script src="index.js" type="text/babel"></script>
+       <script src="chart.js"></script>
+       <script src="edu.js"></script>
+       <script src="dndTree.js"></script>
        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet"/>
     </body>
 </html>

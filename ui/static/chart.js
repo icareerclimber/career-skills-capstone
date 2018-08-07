@@ -4,20 +4,20 @@
 document.getElementById('d3').style.display='none'
 
 // Load unique job titles json data
-d3.json("05_unique_jobs.json", function(error, json) {
-    if (error) throw error;
+//d3v4.json("05_unique_jobs.json", function(error, json) {
+//    if (error) throw error;
 
     // Populate values in the job title dropdown using data from the json
-    var options = jobDrop
-        .selectAll('option')
-        .data(json.map( function (d) {return d.cleaned_job_title} )).enter()
-        .append('option')
-        .text(function (d) { return d; });
+//    var options = jobDrop
+//        .selectAll('option')
+//        .data(json.map( function (d) {return d.cleaned_job_title} )).enter()
+//        .append('option')
+//        .text(function (d) { return d; });
 
-});
+//});
 
 // Load unique states json data
-d3.json("05_unique_states.json", function(error, json) {
+d3v4.json("05_unique_states.json", function(error, json) {
     if (error) throw error;
 
     // Populate values in the state dropdown using data from the json
@@ -31,50 +31,50 @@ d3.json("05_unique_states.json", function(error, json) {
 
 var salaryData = []
 // Load the salary json data
-d3.json("05_salary_data_bar_chart.json", function(error, json) {
+d3v4.json("05_salary_data_bar_chart.json", function(error, json) {
     if (error) throw error;
     salaryData = json.data
 
-    updateGraph(salaryData, 'account executive', 'All')
+    //updateGraph(salaryData, 'account executive', 'All')
 });
 
 // Attach the job title dropdown to the div
-var jobDrop = d3.select("#jobDropdown")
-    .append('select')
-    .attr('class','select')
-    .on('change',onChange);
+//var jobDrop = d3v4.select("#jobDropdown")
+//    .append('select')
+//    .attr('class','select')
+//    .on('change',onChange);
 
 // Attach the state dropdown to the div
-var stateDrop = d3.select("#stateDropdown")
+var stateDrop = d3v4.select("#stateDropdown")
     .append('select')
     .attr('class','select')
     .on('change',onChange);
 
 // Set the margins
-var margin = {top: 100, right: 100, bottom: 100, left: 100},
-  width = 850 - margin.left - margin.right,
-  height = 600 - margin.top - margin.bottom;
+var marginsalary = {top: 100, right: 100, bottom: 100, left: 100},
+  width = 850 - marginsalary.left - marginsalary.right,
+  height = 600 - marginsalary.top - marginsalary.bottom;
 
 // Create SVG
-var svg = d3.select("#graph")
+var svg = d3v4.select("#graph")
         .append("svg")
         .style("width", 1000 + "px")
         .style("height", 1000 + "px")
         .attr("width", 1000)
         .attr("height", 1000)
-        .append("g")
-        .attr("class", "svg");
+        .append("g");
+        //.attr("class", "svg");
 
 // Create tooltip
-var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+var tooltip = d3v4.select("body").append("div").attr("class", "toolTip");
 
 // Set x and y axis range
-var x = d3.scaleLinear().range([0, width]);
-var y = d3.scaleBand().range([height, 0]);
+var xx = d3v4.scaleLinear().range([0, width]);
+var yy = d3v4.scaleBand().range([height, 0]);
 
 // Set location for graph
 var g = svg.append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + marginsalary.left + "," + marginsalary.top + ")");
 
 function onChange() {
     //var jobValue = jobDrop.node().value;
@@ -106,32 +106,32 @@ function updateGraph(data, jobValue, stateValue) {
     g.selectAll("text").remove(); 
 
     // Group the data by name and experience level
-    dataGrouped = d3.nest()
+    dataGrouped = d3v4.nest()
       .key(function(d) { return d.experiences; })
       .rollup(function(v) { return {
-            min: d3.min(v, function(d) { return d.min; }),
-            lower: d3.mean(v, function(d) { return d.lower_quantile; }),
-            median: d3.mean(v, function(d) { return d.median; }),
-            mean: d3.mean(v, function(d) { return d.mean; }),
-            upper: d3.mean(v, function(d) { return d.upper_quantile; }),
-            max: d3.max(v, function(d) { return d.max; }),
-            count: d3.sum(v, function(d) { return d.count; }),
+            min: d3v4.min(v, function(d) { return d.min; }),
+            lower: d3v4.mean(v, function(d) { return d.lower_quantile; }),
+            median: d3v4.mean(v, function(d) { return d.median; }),
+            mean: d3v4.mean(v, function(d) { return d.mean; }),
+            upper: d3v4.mean(v, function(d) { return d.upper_quantile; }),
+            max: d3v4.max(v, function(d) { return d.max; }),
+            count: d3v4.sum(v, function(d) { return d.count; }),
       }; })
-      .sortKeys(d3.descending)
+      .sortKeys(d3v4.descending)
       .entries(filteredData);
 
     // Set domain for x and y axis
-    x.domain([d3.min(dataGrouped, function(d) { return d.value.lower; })-1000, 
-        d3.max(dataGrouped, function(d) { return d.value.upper; })+1000]);
-    y.domain(dataGrouped.map(function(d) { return d.key; })).padding(0.1);
+    xx.domain([d3v4.min(dataGrouped, function(d) { return d.value.lower; })-1000, 
+        d3v4.max(dataGrouped, function(d) { return d.value.upper; })+1000]);
+    yy.domain(dataGrouped.map(function(d) { return d.key; })).padding(0.1);
 
     svg.selectAll(".axis").remove();
     svg.selectAll(".x").remove();
     svg.selectAll(".y").remove();
     
     // Number formatter
-    var formatSmallSuffix = d3.format(".2s"),
-        formatLargeSuffix = d3.format(".3s"),
+    var formatSmallSuffix = d3v4.format(".2s"),
+        formatLargeSuffix = d3v4.format(".3s"),
         formatMoney = function(d) {
             if (d < 100000) { return "$" + formatSmallSuffix(d); }
             else { return "$" + formatLargeSuffix(d); }
@@ -141,13 +141,13 @@ function updateGraph(data, jobValue, stateValue) {
     var xLines = g.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x).ticks(10).tickFormat(function(d) 
+        .call(d3v4.axisBottom(xx).ticks(10).tickFormat(function(d) 
             { return formatMoney(d); }).tickSizeInner([-height]));
 
     // Create y-axis ticks and lines
     var yLines = g.append("g")
         .attr("class", "y axis")
-        .call(d3.axisLeft(y));
+        .call(d3v4.axisLeft(yy));
 
     g.selectAll(".bar").remove()
 
@@ -157,16 +157,16 @@ function updateGraph(data, jobValue, stateValue) {
         .enter()
         .append("rect")
         .attr("class", "bar")
-        .attr("x", function(d) { return x(d.value.lower); })
-        .attr("height", y.bandwidth())
-        .attr("y", function(d) { return y(d.key); })
-        .attr("width", function(d) { return x(d.value.upper) - x(d.value.lower); })
+        .attr("x", function(d) { return xx(d.value.lower); })
+        .attr("height", yy.bandwidth())
+        .attr("y", function(d) { return yy(d.key); })
+        .attr("width", function(d) { return xx(d.value.upper) - xx(d.value.lower); })
         .on("mousemove", function(d){
           //  tooltip
               g.append("text")
               .style('fill', 'blue')
-              .style("left", d3.event.pageX + "px")
-              .style("top", d3.event.pageY + "px")
+              .style("left", d3v4.event.pageX + "px")
+              .style("top", d3v4.event.pageY + "px")
               .style("display", "inline-block");
               
               g.select("text")
@@ -199,16 +199,20 @@ function updateGraph(data, jobValue, stateValue) {
         .enter()
         .append("rect")
         .attr("class", "medianbar")
-        .attr("x", function(d) { return x(d.value.median)-1; })
-        .attr("height", y.bandwidth())
-        .attr("y", function(d) { return y(d.key); })
+        .attr("x", function(d) { return xx(d.value.median)-1; })
+        .attr("height", yy.bandwidth())
+        .attr("y", function(d) { return yy(d.key); })
         .attr("width", 2)
         .on("mousemove", function(d){
-            tooltip
-              .style("left", d3.event.pageX + "px")
-              .style("top", d3.event.pageY + "px")
-              .style("display", "block")
-              .html("Experience: " + (d.key) + "<br><span>Min: " + 
+            //tooltip
+              g.append("text")
+              .style('fill', 'blue')
+              .style("left", d3v4.event.pageX + "px")
+              .style("top", d3v4.event.pageY + "px")
+              .style("display", "inline-block");
+
+              g.select("text")
+              .text("Experience: " + (d.key) + "<br><span>Min: " + 
                     formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " + 
                     formatMoney(d.value.lower) + "</span><br><span> Median: " + 
                     formatMoney(d.value.median) + "</span><br><span> Mean: " + 
