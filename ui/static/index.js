@@ -3,6 +3,8 @@ var jobValue = ''
 function getSkillSet(t) {
     document.getElementById('d3').style.display='block'
     document.getElementById('skillSet').style.display='block'
+    document.getElementById('exploreSalary').style.display='none'
+    document.getElementById('exploreEducation').style.display='none'
     jobValue = unescape(t)
     document.getElementById('exploreSalary').innerHTML="<h3>Explore salary of job <font color='blue'>" + jobValue + "</font> by state:</h3>"
     document.getElementById('exploreEducation').innerHTML="<h3>Explore education background of job <font color='blue'>" + jobValue + ":</h3>"
@@ -625,6 +627,8 @@ class App extends React.Component {
           <h3>Similar Jobs (click on job title to explore more)</h3>
           <div dangerouslySetInnerHTML={{__html: this.state.resultSimilarJobs}} />
           <div id='skillSet'></div>
+          <div id='exploreSalary'></div>
+          <div id='exploreEducation'></div>
         </div>
       </div>
     )

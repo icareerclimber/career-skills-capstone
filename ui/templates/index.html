@@ -33,12 +33,11 @@
             </div>
             <div class="col">
              <div id="d3">
-               <h3>Click on the following tab to explore visually</h3>
-               <ul class="nav nav-tabs">
-                 <li class="active"><a href="#" onClick="CareerPath=window.open('http://people.ischool.berkeley.edu/~keri.wheatley/w210_node_graph/','CareerPath',width=500,height=300); return false;">CareerPathTree</a></li>
-                 <li><a href="#" onClick="CareerPath=window.open('http://people.ischool.berkeley.edu/~keri.wheatley/w210_edu_bar_chart/','CareerPath',width=500,height=300); return false;">Education BackGround</a></li>
-                 <li><a href="#" onClick="Salary=window.open('http://people.ischool.berkeley.edu/~keri.wheatley/w210_salary_bar_chart/','Salary',width=500,height=300); return false;">Salary Distribution</a></li>
-               </ul>
+               <h3>Click on the following buttons to explore visually</h3>
+               <h5> (close the new window when you want to come back)</h5>
+               <button class="btn btn-success" value="CareerPath" onclick="openCareerPath()">Career Path</button>
+               <button class="btn btn-success" value="Education Background" onclick="openEducation()">Education Background</button>
+               <button class="btn btn-success" value="Salary" onclick="openSalary()">Salary</button>
              </div>
             </div>
          </div>
@@ -73,7 +72,18 @@
 	    </div>
 	  </div>
 	</footer>
-
+       
+       <script>
+         function openCareerPath() {
+           window.open("http://people.ischool.berkeley.edu/~keri.wheatley/w210_node_graph/");
+         };
+         function openEducation() {
+           window.open("http://people.ischool.berkeley.edu/~keri.wheatley/w210_edu_bar_chart/");
+         };
+         function openSalary() {
+           window.open("http://people.ischool.berkeley.edu/~keri.wheatley/w210_salary_bar_chart/");
+         }
+       </script>
        <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
        <script src="https://unpkg.com/@pusher/chatkit"></script>
