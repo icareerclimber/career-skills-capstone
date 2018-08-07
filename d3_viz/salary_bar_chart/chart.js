@@ -88,124 +88,145 @@ function updateGraph(data, jobValue, stateValue) {
         return (d.cleaned_job_title == jobValue) && 
         ((d.state == stateValue) | ('All' == stateValue)) });
 
-    // Group the data by name and experience level
-    dataGrouped = d3.nest()
-      .key(function(d) { return d.experiences; })
-      .rollup(function(v) { return {
-            min: d3.min(v, function(d) { return d.min; }),
-            lower: d3.mean(v, function(d) { return d.lower_quantile; }),
-            median: d3.mean(v, function(d) { return d.median; }),
-            mean: d3.mean(v, function(d) { return d.mean; }),
-            upper: d3.mean(v, function(d) { return d.upper_quantile; }),
-            max: d3.max(v, function(d) { return d.max; }),
-            count: d3.sum(v, function(d) { return d.count; }),
-      }; })
-      .sortKeys(d3.descending)
-      .entries(filteredData);
+    if (d3.selectAll(filteredData).size() == 0) {
+        svg.selectAll(".axis").remove();
+        svg.selectAll(".x").remove();
+        svg.selectAll(".y").remove();
+        svg.selectAll("text").remove();
+        g.selectAll(".bar").remove();
+        g.selectAll(".medianbar").remove();
 
-    // Set domain for x and y axis
-    x.domain([d3.min(dataGrouped, function(d) { return d.value.lower; })-1000, 
-        d3.max(dataGrouped, function(d) { return d.value.upper; })+1000]);
-    y.domain(dataGrouped.map(function(d) { return d.key; })).padding(0.1);
-
-    svg.selectAll(".axis").remove();
-    svg.selectAll(".x").remove();
-    svg.selectAll(".y").remove();
-    
-    // Number formatter
-    var formatSmallSuffix = d3.format(".2s"),
-        formatLargeSuffix = d3.format(".3s"),
-        formatMoney = function(d) {
-            if (d < 100000) { return "$" + formatSmallSuffix(d); }
-            else { return "$" + formatLargeSuffix(d); }
+        // text label for no data
+        svg.append("g")
+            .append("text")
+            .attr("class","labels")
+            .attr("transform",
+                "translate(" + margin.left + " ," + margin.top + ")")
+            .style("text-anchor", "center")
+            .text("No data for "+jobValue+" in "+stateValue+".");
         }
+    else {
+        svg.selectAll("text").remove();
 
-    // Create x-axis ticks and lines
-    var xLines = g.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x).ticks(10).tickFormat(function(d) 
-            { return formatMoney(d); }).tickSizeInner([-height]));
+        // Group the data by name and experience level
+        dataGrouped = d3.nest()
+          .key(function(d) { return d.experiences; })
+          .rollup(function(v) { return {
+                min: d3.min(v, function(d) { return d.min; }),
+                lower: d3.mean(v, function(d) { return d.lower_quantile; }),
+                median: d3.mean(v, function(d) { return d.median; }),
+                mean: d3.mean(v, function(d) { return d.mean; }),
+                upper: d3.mean(v, function(d) { return d.upper_quantile; }),
+                max: d3.max(v, function(d) { return d.max; }),
+                count: d3.sum(v, function(d) { return d.count; }),
+          }; })
+          .sortKeys(d3.descending)
+          .entries(filteredData);
 
-    // text label for the x axis
-    svg.append("g")
-        .append("text")
-        .attr("class","labels")
-        .attr("transform",
-            "translate(" + ((width+margin.left)/2+10) + " ," + (height+margin.bottom+50) + ")")
-        .style("text-anchor", "center")
-        .text("Annual Salary");
+        // Set domain for x and y axis
+        x.domain([d3.min(dataGrouped, function(d) { return d.value.lower; })-1000, 
+            d3.max(dataGrouped, function(d) { return d.value.upper; })+1000]);
+        y.domain(dataGrouped.map(function(d) { return d.key; })).padding(0.1);
 
-    // Create y-axis ticks and lines
-    var yLines = g.append("g")
-        .attr("class", "y axis")
-        .call(d3.axisLeft(y));
+        svg.selectAll(".axis").remove();
+        svg.selectAll(".x").remove();
+        svg.selectAll(".y").remove();
+        
+        // Number formatter
+        var formatSmallSuffix = d3.format(".2s"),
+            formatLargeSuffix = d3.format(".3s"),
+            formatMoney = function(d) {
+                if (d < 100000) { return "$" + formatSmallSuffix(d); }
+                else { return "$" + formatLargeSuffix(d); }
+            }
 
-    // text label for the y axis
-    svg.append("text")
-        .attr("class","labels")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 0)
-        .attr("x", -(height-margin.bottom))
-        .attr("dy", "1em")
-        .style("text-anchor", "middle")
-        .text("Experience Qualifier");
+        // Create x-axis ticks and lines
+        var xLines = g.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x).ticks(10).tickFormat(function(d) 
+                { return formatMoney(d); }).tickSizeInner([-height]));
 
-    g.selectAll(".bar").remove()
+        // text label for the x axis
+        svg.append("g")
+            .append("text")
+            .attr("class","labels")
+            .attr("transform",
+                "translate(" + ((width+margin.left)/2+10) + " ," + (height+margin.bottom+50) + ")")
+            .style("text-anchor", "center")
+            .text("Annual Salary");
 
-    // Create bars for graph and create tooltip
-    g.selectAll(".bar")
-        .data(dataGrouped)
-        .enter()
-        .append("rect")
-        .attr("class", "bar")
-        .attr("x", function(d) { return x(d.value.lower); })
-        .attr("height", y.bandwidth())
-        .attr("y", function(d) { return y(d.key); })
-        .attr("width", function(d) { return x(d.value.upper) - x(d.value.lower); })
-        .on("mousemove", function(d){
-            tooltip
-              .style("left", d3.event.pageX + "px")
-              .style("top", d3.event.pageY + "px")
-              .style("display", "inline-block")
-              .html("Experience Qualifier: " + (d.key) + "<br><span>Min: " + 
-                    formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " + 
-                    formatMoney(d.value.lower) + "</span><br><span> Median: " + 
-                    formatMoney(d.value.median) + "</span><br><span> Mean: " + 
-                    formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " + 
-                    formatMoney(d.value.upper) + "</span><br><span> Max: " + 
-                    formatMoney(d.value.max) + "</span><br><span> Total Records: " + 
-                    (d.value.count)
-                    );
-        })
-        .on("mouseout", function(d){ tooltip.style("display", "none");});
+        // Create y-axis ticks and lines
+        var yLines = g.append("g")
+            .attr("class", "y axis")
+            .call(d3.axisLeft(y));
 
-    g.selectAll(".medianbar").remove()
+        // text label for the y axis
+        svg.append("text")
+            .attr("class","labels")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0)
+            .attr("x", -(height-margin.bottom))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text("Experience Qualifier");
 
-    // Create bars for median
-    g.selectAll(".medianbar")
-        .data(dataGrouped)
-        .enter()
-        .append("rect")
-        .attr("class", "medianbar")
-        .attr("x", function(d) { return x(d.value.median)-1; })
-        .attr("height", y.bandwidth())
-        .attr("y", function(d) { return y(d.key); })
-        .attr("width", 2)
-        .on("mousemove", function(d){
-            tooltip
-              .style("left", d3.event.pageX + "px")
-              .style("top", d3.event.pageY + "px")
-              .style("display", "inline-block")
-              .html("Experience: " + (d.key) + "<br><span>Min: " + 
-                    formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " + 
-                    formatMoney(d.value.lower) + "</span><br><span> Median: " + 
-                    formatMoney(d.value.median) + "</span><br><span> Mean: " + 
-                    formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " + 
-                    formatMoney(d.value.upper) + "</span><br><span> Max: " + 
-                    formatMoney(d.value.max) + "</span><br><span> Count: " + 
-                    (d.value.count)
-                    );
-        })
-        .on("mouseout", function(d){ tooltip.style("display", "none");});
+        g.selectAll(".bar").remove()
+
+        // Create bars for graph and create tooltip
+        g.selectAll(".bar")
+            .data(dataGrouped)
+            .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.value.lower); })
+            .attr("height", y.bandwidth())
+            .attr("y", function(d) { return y(d.key); })
+            .attr("width", function(d) { return x(d.value.upper) - x(d.value.lower); })
+            .on("mousemove", function(d){
+                tooltip
+                  .style("left", d3.event.pageX + "px")
+                  .style("top", d3.event.pageY + "px")
+                  .style("display", "inline-block")
+                  .html("Experience Qualifier: " + (d.key) + "<br><span>Min: " + 
+                        formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " + 
+                        formatMoney(d.value.lower) + "</span><br><span> Median: " + 
+                        formatMoney(d.value.median) + "</span><br><span> Mean: " + 
+                        formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " + 
+                        formatMoney(d.value.upper) + "</span><br><span> Max: " + 
+                        formatMoney(d.value.max) + "</span><br><span> Total Records: " + 
+                        (d.value.count)
+                        );
+            })
+            .on("mouseout", function(d){ tooltip.style("display", "none");});
+
+        g.selectAll(".medianbar").remove()
+
+        // Create bars for median
+        g.selectAll(".medianbar")
+            .data(dataGrouped)
+            .enter()
+            .append("rect")
+            .attr("class", "medianbar")
+            .attr("x", function(d) { return x(d.value.median)-1; })
+            .attr("height", y.bandwidth())
+            .attr("y", function(d) { return y(d.key); })
+            .attr("width", 2)
+            .on("mousemove", function(d){
+                tooltip
+                  .style("left", d3.event.pageX + "px")
+                  .style("top", d3.event.pageY + "px")
+                  .style("display", "inline-block")
+                  .html("Experience: " + (d.key) + "<br><span>Min: " + 
+                        formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " + 
+                        formatMoney(d.value.lower) + "</span><br><span> Median: " + 
+                        formatMoney(d.value.median) + "</span><br><span> Mean: " + 
+                        formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " + 
+                        formatMoney(d.value.upper) + "</span><br><span> Max: " + 
+                        formatMoney(d.value.max) + "</span><br><span> Count: " + 
+                        (d.value.count)
+                        );
+            })
+            .on("mouseout", function(d){ tooltip.style("display", "none");});
+    };
 };
