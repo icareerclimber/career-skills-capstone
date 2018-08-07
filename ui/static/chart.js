@@ -35,7 +35,7 @@ d3v4.json("05_salary_data_bar_chart.json", function(error, json) {
     if (error) throw error;
     salaryData = json.data
 
-    updateGraph(salaryData, 'account executive', 'All')
+    //updateGraph(salaryData, 'account executive', 'All')
 });
 
 // Attach the job title dropdown to the div
@@ -62,8 +62,8 @@ var svg = d3v4.select("#graph")
         .style("height", 1000 + "px")
         .attr("width", 1000)
         .attr("height", 1000)
-        .append("g")
-        .attr("class", "svg");
+        .append("g");
+        //.attr("class", "svg");
 
 // Create tooltip
 var tooltip = d3v4.select("body").append("div").attr("class", "toolTip");
@@ -204,11 +204,15 @@ function updateGraph(data, jobValue, stateValue) {
         .attr("y", function(d) { return yy(d.key); })
         .attr("width", 2)
         .on("mousemove", function(d){
-            tooltip
+            //tooltip
+              g.append("text")
+              .style('fill', 'blue')
               .style("left", d3v4.event.pageX + "px")
               .style("top", d3v4.event.pageY + "px")
-              .style("display", "block")
-              .html("Experience: " + (d.key) + "<br><span>Min: " + 
+              .style("display", "inline-block");
+
+              g.select("text")
+              .text("Experience: " + (d.key) + "<br><span>Min: " + 
                     formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " + 
                     formatMoney(d.value.lower) + "</span><br><span> Median: " + 
                     formatMoney(d.value.median) + "</span><br><span> Mean: " + 

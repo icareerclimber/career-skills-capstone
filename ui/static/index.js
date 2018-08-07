@@ -4,8 +4,8 @@ function getSkillSet(t) {
     document.getElementById('d3').style.display='block'
     document.getElementById('skillSet').style.display='block'
     jobValue = unescape(t)
-    document.getElementById('exploreSalary').innerHTML="<h3>Exlore salary of job <font color='blue'>" + jobValue + "</font> by state:</h3>"
-    document.getElementById('exploreEducation').innerHTML="<h3>Exlore education background of job <font color='blue'>" + jobValue + "</font> by state:</h3>"
+    document.getElementById('exploreSalary').innerHTML="<h3>Explore salary of job <font color='blue'>" + jobValue + "</font> by state:</h3>"
+    document.getElementById('exploreEducation').innerHTML="<h3>Explore education background of job <font color='blue'>" + jobValue + ":</h3>"
     updateGraph(salaryData, jobValue, 'All')
     make_node_graph(jobValue)
     updateEduGraph(eduData, jobValue)
