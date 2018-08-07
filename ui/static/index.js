@@ -591,6 +591,7 @@ class App extends React.Component {
   }
 
   handleSubmit() {
+    console.log("SUBMIT")
     //const sum = this.state.summary
     //const last = sum.Work[sum.Work.length - 1]
     //const lastTitle = last.Title
