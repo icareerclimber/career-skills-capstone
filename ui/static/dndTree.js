@@ -181,7 +181,7 @@ function centerNode(source) {
     y = -source.x0;
     x = x * scale + viewerWidth / 2;
     y = y * scale + viewerHeight / 2;
-    d3v3.select('g').transition()
+    d3v3.select('#tree-container g').transition()
         .duration(duration)
         .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
     zoomListener.scale(scale);
@@ -229,7 +229,7 @@ function make_node_graph(job) {
             update(d);
             centerNode(d);
         };
-      
+
         function clickLink(d) {
             d = d.target;
             console.log(d);
@@ -258,7 +258,7 @@ function make_node_graph(job) {
                 }
             };
             childCount(0, root);
-            var newHeight = d3v3.max(levelWidth) * 50; // 25 pixels per line  
+            var newHeight = d3v3.max(levelWidth) * 50; // 25 pixels per line
             tree = tree.size([newHeight, viewerWidth]);
 
             // Compute the new tree layout.
@@ -424,7 +424,7 @@ function make_node_graph(job) {
         root = treeData;
         root.x0 = viewerHeight / 2;
         root.y0 = 0;
-      
+
       // Collapse all children of roots children before rendering.
       root.children.forEach(function(child){
         collapse(child);

@@ -25,30 +25,12 @@ d3v4.csv("04_ranked_subjects.csv", function(error, data) {
     if (error) throw error;
     rankedSubjects = data
 
-    //updateGraph(eduData, 'account executive')
 })
 
-// Load unique job titles json data
-//d3v4.csv("04_unique_jobs.csv", function(error, data) {
-//    if (error) throw error;
-
-    // Populate values in the job title dropdown using data from the json
-//    var options = jobDrop
-//        .selectAll('option')
-//        .data(data.map( function (d) {return d.cleaned_job_title} )).enter()
-//        .append('option')
-//        .text(function (d) { return d; });
-
-//});
-
-// Attach the job title dropdown to the div
-//var jobDrop = d3v4.select("#jobDropdown")
-//    .append('select')
-//    .attr('class','select')
-//    .on('change', function() {
-//        jobValue = jobDrop.node().value;
-//        updateGraph(eduData, jobValue)
-//    });
+d3v4.select("#edugraph")
+    .append("svg")
+    .attr("width", 800)
+    .attr("height", 700)
 
 function updateEduGraph(data, jobValue) {
 
@@ -58,24 +40,16 @@ function updateEduGraph(data, jobValue) {
     var group = rankedSubjects.filter(function(d) {
         return (d.cleaned_job_title == jobValue) }).map( function(d) {return d.subject_name });
 
-    var gvs = d3v4.select("#edugraph")
-        .append("svg")
-        .style("width", 1000 + "px")
-        .style("height", 1000 + "px")
-        .attr("width", 1000)
-        .attr("height", 1000)
-        .append("g")
-        .attr("class", "svg");
 
-    //var gvs = d3v4.select("svg"),
-    var margin = {
+    var gvs = d3v4.select("#edugraph svg"),
+        margin = {
             top: 25,
             right: 100,
             bottom: 100,
             left: 180
-        };
-    //    width = +gvs.attr("width"),
-    //    height = +gvs.attr("height");
+        },
+        width = +gvs.attr("width"),
+        height = +gvs.attr("height");
 
     var xxx = d3v4.scaleLinear()
         .rangeRound([margin.left, width - margin.right]);
@@ -117,7 +91,7 @@ function updateEduGraph(data, jobValue) {
     gvs.selectAll(".x").remove();
     gvs.selectAll(".y").remove();
 
-    var tooltip = d3v4.select("body").append("div").attr("class", "toolTip");
+    var tooltip = d3v4.select("#education").append("div").attr("class", "toolTip");
 
     g.selectAll("rect")
         .data(function(d) {
@@ -144,6 +118,7 @@ function updateEduGraph(data, jobValue) {
               .style("left", d3v4.event.pageX + "px")
               .style("top", d3v4.event.pageY + "px")
               .style("display", "inline-block")
+              .style("opacity", 1)
               .html('Degree Subject: "' + (d.name) + '"' +
                     "</span><br><span>Total Records: " + (d.value));
         })

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: icareers-frontend
+spec:
+  selector:
+    matchLabels:
+      app: icareers
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: icareers
+        tier: frontend
+    spec:
+      containers:
+      - name: icareers-frontend
+        image: gcr.io/stalwart-kite-207008/icareers-ui:1.10
+        ports:
+          - name: http
+            containerPort: 8081
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: icareers-frontend
+spec:
+  selector:
+    app: icareers
+    tier: frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: http
+  type: LoadBalancer
