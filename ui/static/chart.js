@@ -82,6 +82,25 @@ function updateGraph(data, jobValue, stateValue) {
 
     g.selectAll("text").remove();
 
+        // text label for the x axis
+        svg.append("g")
+            .append("text")
+            .attr("class","labels")
+            .attr("transform",
+                "translate(350,550)")
+            .style("text-anchor", "center")
+            .text("Annual Salary");
+
+        // text label for the y axis
+        svg.append("text")
+            .attr("class","labels")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0)
+            .attr("x", -300)
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text("Experience Qualifier");
+
     // Group the data by name and experience level
     dataGrouped = d3v4.nest()
       .key(function(d) { return d.experiences; })
@@ -186,4 +205,5 @@ function updateGraph(data, jobValue, stateValue) {
                   );
         })
         .on("mouseout", function(d){ tooltip.style("display", "none");});
+
 };

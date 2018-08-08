@@ -201,7 +201,7 @@ class WorkDescription extends React.Component {
   render() {
     return (
       <div className="col-lg-1">
-        <textarea float="none" rows='5' cols='120' onChange={this.handleWorkDescriptionChange}/>
+        <textarea float="none" rows='5' cols='120' placeholder="e.g., Lead amazing team of engineers distributed in multiple geographies to build cutting edge infrastructure as we lead the company in the public cloud space." onChange={this.handleWorkDescriptionChange}/>
       </div>
     )
   }
