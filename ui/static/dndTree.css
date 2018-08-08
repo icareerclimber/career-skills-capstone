@@ -1,0 +1,42 @@
+.node, .link {
+  cursor: pointer;
+}
+
+body {
+  margin: 15px;
+/*  background-color: #F1F3F3;*/
+  font-family: 'Fira Sans', sans-serif;
+}
+ 
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
+ 
+.node text {
+  font-size:20px; 
+  font-family:'Fira Sans', sans-serif;
+  font-weight: 450;
+  color: #081F2C;
+}
+ 
+.link {
+  fill: none;
+  stroke: #ccc;
+  /*stroke-width: 5px;*/
+}
+
+/*  .templink {
+  fill: none;
+  stroke: red;
+  stroke-width: 3px;
+}
+*/
+.ghostCircle.show{
+    display:block;
+}
+
+.ghostCircle, .activeDrag .ghostCircle{
+     display: none;
+}

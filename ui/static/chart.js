@@ -3,19 +3,6 @@
 // hide visualization when first started
 document.getElementById('d3').style.display='none'
 
-// Load unique job titles json data
-//d3v4.json("05_unique_jobs.json", function(error, json) {
-//    if (error) throw error;
-
-    // Populate values in the job title dropdown using data from the json
-//    var options = jobDrop
-//        .selectAll('option')
-//        .data(json.map( function (d) {return d.cleaned_job_title} )).enter()
-//        .append('option')
-//        .text(function (d) { return d; });
-
-//});
-
 // Load unique states json data
 d3v4.json("05_unique_states.json", function(error, json) {
     if (error) throw error;
@@ -34,15 +21,8 @@ var salaryData = []
 d3v4.json("05_salary_data_bar_chart.json", function(error, json) {
     if (error) throw error;
     salaryData = json.data
-
-    //updateGraph(salaryData, 'account executive', 'All')
 });
 
-// Attach the job title dropdown to the div
-//var jobDrop = d3v4.select("#jobDropdown")
-//    .append('select')
-//    .attr('class','select')
-//    .on('change',onChange);
 
 // Attach the state dropdown to the div
 var stateDrop = d3v4.select("#stateDropdown")
@@ -63,10 +43,9 @@ var svg = d3v4.select("#graph")
         .attr("width", 1000)
         .attr("height", 1000)
         .append("g");
-        //.attr("class", "svg");
 
 // Create tooltip
-var tooltip = d3v4.select("body").append("div").attr("class", "toolTip");
+var tooltip = d3v4.select("#salary").append("div").attr("class", "toolTip");
 
 // Set x and y axis range
 var xx = d3v4.scaleLinear().range([0, width]);
@@ -77,8 +56,6 @@ var g = svg.append("g")
         .attr("transform", "translate(" + marginsalary.left + "," + marginsalary.top + ")");
 
 function onChange() {
-    //var jobValue = jobDrop.node().value;
-    //console.log(jobValue);
     var stateValue = stateDrop.node().value;
     console.log(stateValue);
     updateGraph(salaryData, jobValue, stateValue)
@@ -87,7 +64,7 @@ function onChange() {
 function updateGraph(data, jobValue, stateValue) {
 
     var filteredData = data.filter(function(d) {
-        return (d.cleaned_job_title == jobValue) && 
+        return (d.cleaned_job_title == jobValue) &&
         ((d.state == stateValue) | ('All' == stateValue)) });
 
     console.log(filteredData.length)
@@ -99,11 +76,11 @@ function updateGraph(data, jobValue, stateValue) {
         g.selectAll(".bar").remove();
         g.selectAll(".medianbar").remove();
         g.append("text").style("font-size", "3em").text("No Data");
-        
+
         return
     }
-    
-    g.selectAll("text").remove(); 
+
+    g.selectAll("text").remove();
 
     // Group the data by name and experience level
     dataGrouped = d3v4.nest()
@@ -121,14 +98,14 @@ function updateGraph(data, jobValue, stateValue) {
       .entries(filteredData);
 
     // Set domain for x and y axis
-    xx.domain([d3v4.min(dataGrouped, function(d) { return d.value.lower; })-1000, 
+    xx.domain([d3v4.min(dataGrouped, function(d) { return d.value.lower; })-1000,
         d3v4.max(dataGrouped, function(d) { return d.value.upper; })+1000]);
     yy.domain(dataGrouped.map(function(d) { return d.key; })).padding(0.1);
 
     svg.selectAll(".axis").remove();
     svg.selectAll(".x").remove();
     svg.selectAll(".y").remove();
-    
+
     // Number formatter
     var formatSmallSuffix = d3v4.format(".2s"),
         formatLargeSuffix = d3v4.format(".3s"),
@@ -141,7 +118,7 @@ function updateGraph(data, jobValue, stateValue) {
     var xLines = g.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3v4.axisBottom(xx).ticks(10).tickFormat(function(d) 
+        .call(d3v4.axisBottom(xx).ticks(10).tickFormat(function(d)
             { return formatMoney(d); }).tickSizeInner([-height]));
 
     // Create y-axis ticks and lines
@@ -163,36 +140,25 @@ function updateGraph(data, jobValue, stateValue) {
         .attr("width", function(d) { return xx(d.value.upper) - xx(d.value.lower); })
         .on("mousemove", function(d){
           //  tooltip
-              g.append("text")
-              .style('fill', 'blue')
-              .style("left", d3v4.event.pageX + "px")
-              .style("top", d3v4.event.pageY + "px")
-              .style("display", "inline-block");
-              
-              g.select("text")
-              .append("tspan")
-              .attr("x", 0)
-              .attr("y", 0)
-              .text("Experience: " + (d.key))
-              .append("tspan")
-              .text(" Min: " + formatMoney(d.value.min))
-              .append("tspan")
-              .text(" Lower Quartile: " + formatMoney(d.value.lower))
-              .append("tspan")
-              .text(" Median: " + formatMoney(d.value.median))
-              .append("tspan")
-              .text(" Mean: " + formatMoney(d.value.mean)) 
-              .append("tspan")
-              .text(" Upper Quartile: " + formatMoney(d.value.upper))
-              .append("tspan")
-              .text(" Max: " + formatMoney(d.value.max)) 
-              .append("tspan")
-              .text(" Count: " + (d.value.count));
+          tooltip
+            .style("left", d3v4.event.pageX + "px")
+            .style("top", d3v4.event.pageY + "px")
+            .style("display", "inline-block")
+            .style("opacity", 1)
+            .html("Experience Qualifier: " + (d.key) + "<br><span>Min: " +
+                  formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " +
+                  formatMoney(d.value.lower) + "</span><br><span> Median: " +
+                  formatMoney(d.value.median) + "</span><br><span> Mean: " +
+                  formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " +
+                  formatMoney(d.value.upper) + "</span><br><span> Max: " +
+                  formatMoney(d.value.max) + "</span><br><span> Total Records: " +
+                  (d.value.count)
+                  );
         })
-        .on("mouseout", function(d){ g.selectAll("text").remove();});
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
 
     g.selectAll(".medianbar").remove()
-
+    
     // Create bars for median
     g.selectAll(".medianbar")
         .data(dataGrouped)
@@ -204,23 +170,20 @@ function updateGraph(data, jobValue, stateValue) {
         .attr("y", function(d) { return yy(d.key); })
         .attr("width", 2)
         .on("mousemove", function(d){
-            //tooltip
-              g.append("text")
-              .style('fill', 'blue')
-              .style("left", d3v4.event.pageX + "px")
-              .style("top", d3v4.event.pageY + "px")
-              .style("display", "inline-block");
-
-              g.select("text")
-              .text("Experience: " + (d.key) + "<br><span>Min: " + 
-                    formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " + 
-                    formatMoney(d.value.lower) + "</span><br><span> Median: " + 
-                    formatMoney(d.value.median) + "</span><br><span> Mean: " + 
-                    formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " + 
-                    formatMoney(d.value.upper) + "</span><br><span> Max: " + 
-                    formatMoney(d.value.max) + "</span><br><span> Count: " + 
-                    (d.value.count)
-                    );
+          tooltip
+            .style("left", d3v4.event.pageX + "px")
+            .style("top", d3v4.event.pageY + "px")
+            .style("display", "inline-block")
+            .style("opacity", 1)
+            .html("Experience: " + (d.key) + "<br><span>Min: " +
+                  formatMoney(d.value.min) + "</span><br><span> Lower Quartile: " +
+                  formatMoney(d.value.lower) + "</span><br><span> Median: " +
+                  formatMoney(d.value.median) + "</span><br><span> Mean: " +
+                  formatMoney(d.value.mean) + "</span><br><span> Upper Quartile: " +
+                  formatMoney(d.value.upper) + "</span><br><span> Max: " +
+                  formatMoney(d.value.max) + "</span><br><span> Count: " +
+                  (d.value.count)
+                  );
         })
-        .on("mouseout", function(d){ g.selectAll("text").remove();});
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
 };
